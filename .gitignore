@@ -1,0 +1,25 @@
+# Environment and secrets – never commit
+.env
+.env.local
+.env.*.local
+
+# Dependencies
+/node_modules/
+/server/node_modules/
+/client/node_modules/
+
+# Composer (legacy)
+/vendor/
+composer.lock
+
+# IDE and OS
+.idea/
+.vscode/
+*.swp
+.DS_Store
+Thumbs.db
+
+# Logs and temp
+*.log
+/tmp/
+/temp/
