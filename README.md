@@ -114,3 +114,4 @@ Then open **http://localhost:3000** in your browser.
 - **.env not loading**  
   - Keep `.env` in the **project root** (same folder as `server/` and `client/`).  
   - Use `#` for comments in `.env`, not `;`.
+"# diet_app" 
