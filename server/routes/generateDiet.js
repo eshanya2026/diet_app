@@ -9,11 +9,14 @@ import { validateUserHealthPayload } from '../utils/validation.js';
 import { calculateBmi, bmiCategory } from '../utils/bmi.js';
 import { buildDietPrompt, callGeminiForDiet } from '../utils/gemini.js';
 import { generateRuleBasedDiet, generateWeeklyRuleBasedDiet, getTargetCalories } from '../utils/dietGenerator.js';
+import { buildDayChartFromFoods, buildWeeklyChartsFromFoods, SLOT_TO_MEAL_TYPE } from '../utils/foodDietGenerator.js';
 import { ensureMacros, computeDietScore } from '../utils/dietScore.js';
 import { getRequestHash, getCached, setCached } from '../utils/cache.js';
 import { logger } from '../utils/logger.js';
-import { findOrCreateUser } from '../repositories/userRepository.js';
+import { findOrCreateUser, findUserById } from '../repositories/userRepository.js';
 import { createDietPlan } from '../repositories/dietPlanRepository.js';
+import { countFoods, findFiltered } from '../repositories/foodRepository.js';
+import { optionalUserAuth } from '../middleware/userAuth.js';
 
 const USE_GEMINI = process.env.DIET_MODE === 'gemini' && process.env.GEMINI_API_KEY;
 
@@ -54,7 +57,7 @@ generateDietRouter.get('/', (_req, res) => {
   });
 });
 
-generateDietRouter.post('/', async (req, res) => {
+generateDietRouter.post('/', optionalUserAuth, async (req, res) => {
   try {
     const payload = req.body ?? {};
     if (typeof payload !== 'object') {
@@ -108,19 +111,26 @@ generateDietRouter.post('/', async (req, res) => {
 
     let userDoc = null;
     let saved = true;
-    try {
-      userDoc = await findOrCreateUser({
-        name: data.name,
-        age: data.age,
-        gender: data.gender,
-        height: data.height,
-        weight: data.weight,
-        diet_preference: data.diet_preference,
-        goal: data.goal,
-      });
-    } catch (err) {
-      logger.warn('Generate diet: save user failed (continuing without DB)', { message: err?.message ?? err });
-      saved = false;
+    if (req.userId) {
+      try {
+        userDoc = await findUserById(req.userId);
+      } catch (_) {}
+    }
+    if (!userDoc?._id) {
+      try {
+        userDoc = await findOrCreateUser({
+          name: data.name,
+          age: data.age,
+          gender: data.gender,
+          height: data.height,
+          weight: data.weight,
+          diet_preference: data.diet_preference,
+          goal: data.goal,
+        });
+      } catch (err) {
+        logger.warn('Generate diet: save user failed (continuing without DB)', { message: err?.message ?? err });
+        saved = false;
+      }
     }
     if (!userDoc?._id) {
       userDoc = { _id: new ObjectId() };
@@ -132,14 +142,48 @@ generateDietRouter.post('/', async (req, res) => {
     if (isWeekly) {
       try {
         const targetCal = getTargetCalories(data);
-        const weekly = generateWeeklyRuleBasedDiet(data, targetCal);
-        const normalizedDays = (weekly.days ?? []).map((day) => normalizeDietChart(day));
-        dietChart = {
-          days: normalizedDays,
-          calories: weekly.calories ?? '',
-          suggestions: Array.isArray(weekly.suggestions) ? weekly.suggestions : [],
-        };
-        dietRaw = null;
+        let useFoodDb = false;
+        const foodCount = await countFoods().catch(() => 0);
+        if (foodCount > 0 && !USE_GEMINI) {
+          const primaryCondition = data.health_conditions?.[0] ?? 'none';
+          const baseOpts = {
+            cuisine: data.cuisine_preference ?? 'Mixed',
+            condition: primaryCondition,
+            diet_preference: data.diet_preference ?? 'veg',
+          };
+          const mealTypes = ['Breakfast', 'Lunch', 'Dinner', 'Snack'];
+          const slotCounts = await Promise.all(
+            mealTypes.map((mt) => findFiltered({ ...baseOpts, meal_type: mt }).then((arr) => arr.length))
+          );
+          useFoodDb = slotCounts.every((c) => c > 0);
+        }
+        if (useFoodDb) {
+          const primaryCondition = data.health_conditions?.[0] ?? 'none';
+          const getFoods = (mealType) =>
+            findFiltered({
+              cuisine: data.cuisine_preference ?? 'Mixed',
+              meal_type: mealType,
+              condition: primaryCondition,
+              diet_preference: data.diet_preference ?? 'veg',
+            });
+          const weekly = await buildWeeklyChartsFromFoods(getFoods, data, targetCal);
+          const normalizedDays = (weekly.days ?? []).map((day) => normalizeDietChart(day));
+          dietChart = {
+            days: normalizedDays,
+            calories: weekly.calories ?? '',
+            suggestions: Array.isArray(weekly.suggestions) ? weekly.suggestions : [],
+          };
+          dietRaw = null;
+        } else {
+          const weekly = generateWeeklyRuleBasedDiet(data, targetCal);
+          const normalizedDays = (weekly.days ?? []).map((day) => normalizeDietChart(day));
+          dietChart = {
+            days: normalizedDays,
+            calories: weekly.calories ?? '',
+            suggestions: Array.isArray(weekly.suggestions) ? weekly.suggestions : [],
+          };
+          dietRaw = null;
+        }
       } catch (dietErr) {
         const dietMsg = dietErr?.message ?? String(dietErr);
         logger.error('Generate diet: weekly rule-based error', { message: dietMsg, stack: dietErr?.stack });
@@ -165,7 +209,40 @@ generateDietRouter.post('/', async (req, res) => {
       } else {
         try {
           const targetCal = getTargetCalories(data);
-          dietRaw = generateRuleBasedDiet(data, targetCal);
+          const foodCount = await countFoods().catch(() => 0);
+          let useFoodDb = false;
+          if (foodCount > 0) {
+            const primaryCondition = data.health_conditions?.[0] ?? 'none';
+            const baseOpts = {
+              cuisine: data.cuisine_preference ?? 'Mixed',
+              condition: primaryCondition,
+              diet_preference: data.diet_preference ?? 'veg',
+            };
+            const mealTypes = ['Breakfast', 'Lunch', 'Dinner', 'Snack'];
+            const slotCounts = await Promise.all(
+              mealTypes.map((mt) => findFiltered({ ...baseOpts, meal_type: mt }).then((arr) => arr.length))
+            );
+            useFoodDb = slotCounts.every((c) => c > 0);
+          }
+          if (useFoodDb) {
+            const primaryCondition = data.health_conditions?.[0] ?? 'none';
+            const opts = {
+              cuisine: data.cuisine_preference ?? 'Mixed',
+              condition: primaryCondition,
+              diet_preference: data.diet_preference ?? 'veg',
+            };
+            const foodsBySlot = {};
+            for (const slot of MEAL_KEYS) {
+              const mealType = SLOT_TO_MEAL_TYPE[slot];
+              foodsBySlot[slot] = await findFiltered({ ...opts, meal_type: mealType });
+            }
+            const daySeed = Math.abs(
+              (String(data.name) + String(data.diet_preference) + String(data.goal)).split('').reduce((a, c) => a + c.charCodeAt(0), 0)
+            );
+            dietRaw = buildDayChartFromFoods(foodsBySlot, targetCal, data, daySeed);
+          } else {
+            dietRaw = generateRuleBasedDiet(data, targetCal);
+          }
         } catch (dietErr) {
           const dietMsg = dietErr?.message ?? String(dietErr);
           logger.error('Generate diet: rule-based error', { message: dietMsg, stack: dietErr?.stack });
@@ -239,6 +316,7 @@ generateDietRouter.post('/', async (req, res) => {
           activity_level: String(data.activity_level ?? ''),
           diet_preference: String(data.diet_preference ?? ''),
           health_conditions: Array.isArray(data.health_conditions) ? [...data.health_conditions] : [],
+          cuisine_preference: String(data.cuisine_preference ?? 'Mixed'),
           goal: String(data.goal ?? ''),
           bmi: Math.round(bmi * 10) / 10,
           bmi_category: String(bmiCat),

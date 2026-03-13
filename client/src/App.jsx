@@ -9,6 +9,9 @@ import Water from './pages/Water';
 import Weight from './pages/Weight';
 import Compliance from './pages/Compliance';
 import Settings from './pages/Settings';
+import Login from './pages/Login';
+import Register from './pages/Register';
+import Profile from './pages/Profile';
 import AdminGuard from './admin/AdminGuard';
 import AdminLayout from './admin/AdminLayout';
 import AdminLogin from './admin/AdminLogin';
@@ -24,6 +27,8 @@ export default function App() {
     <ErrorBoundary>
       <Routes>
       <Route path="/admin/login" element={<AdminLogin />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
       <Route
         path="/admin"
         element={
@@ -48,6 +53,7 @@ export default function App() {
         <Route path="/weight" element={<Weight />} />
         <Route path="/compliance" element={<Compliance />} />
         <Route path="/settings" element={<Settings />} />
+        <Route path="/profile" element={<Profile />} />
       </Route>
     </Routes>
     </ErrorBoundary>

@@ -8,19 +8,10 @@ import { useTheme } from '../context/ThemeContext';
 import PageHeader from '../components/PageHeader';
 import { getUserSettings, updateUserSettings } from '../api/dietApi';
 
-const STORAGE_KEYS = ['diet_app_theme', 'latestDietResult', 'dietUserId', 'water_log', 'weight_log'];
-
-function getUserId() {
-  try {
-    return sessionStorage.getItem('dietUserId') ?? null;
-  } catch {
-    return null;
-  }
-}
+const STORAGE_KEYS_NON_AUTH = ['diet_app_theme', 'latestDietResult', 'dietUserId', 'water_log', 'weight_log'];
 
 export default function Settings() {
   const { theme, setTheme } = useTheme();
-  const [userId] = useState(getUserId);
   const [remindersEnabled, setRemindersEnabled] = useState(false);
   const [waterRemindersEnabled, setWaterRemindersEnabled] = useState(false);
   const [times, setTimes] = useState({
@@ -34,9 +25,8 @@ export default function Settings() {
   const [savingSettings, setSavingSettings] = useState(false);
 
   useEffect(() => {
-    if (!userId) return;
     setLoadingSettings(true);
-    getUserSettings(userId)
+    getUserSettings()
       .then((res) => {
         if (res?.success && res.data) {
           setRemindersEnabled(Boolean(res.data.reminders_enabled));
@@ -52,14 +42,17 @@ export default function Settings() {
         setSettingsError(err?.error?.message ?? 'Failed to load reminder settings.');
       })
       .finally(() => setLoadingSettings(false));
-  }, [userId]);
+  }, []);
 
   const handleClearData = () => {
-    if (!window.confirm('Clear all local data (plans, water, weight)? This cannot be undone.')) return;
-    STORAGE_KEYS.forEach((k) => localStorage.removeItem(k));
-    sessionStorage.clear();
+    if (!window.confirm('Clear local app data (saved plan, water log, weight log)? You will stay logged in.')) return;
+    STORAGE_KEYS_NON_AUTH.forEach((k) => localStorage.removeItem(k));
+    try {
+      sessionStorage.removeItem('latestDietResult');
+      sessionStorage.removeItem('dietUserId');
+    } catch (_) {}
     setTheme(theme);
-    window.alert('Data cleared. Reload the page.');
+    window.alert('App data cleared. You are still logged in.');
   };
 
   const handleTimeChange = (key, value) => {
@@ -67,16 +60,11 @@ export default function Settings() {
   };
 
   const handleSaveReminders = async () => {
-    if (!userId) {
-      setSettingsError('Generate a diet plan first so we can link reminders to your user.');
-      return;
-    }
     setSettingsError('');
     setSettingsSaved('');
     setSavingSettings(true);
     try {
       const res = await updateUserSettings({
-        user_id: userId,
         ...times,
         reminders_enabled: remindersEnabled,
         water_reminders_enabled: waterRemindersEnabled,
@@ -100,16 +88,9 @@ export default function Settings() {
       <div className="card theme-card shadow-theme mb-3">
         <div className="card-body">
           <h2 className="h6 fw-semibold theme-text mb-2">Smart meal reminders</h2>
-          {!userId && (
-            <p className="text-muted small mb-2">
-              Generate a diet plan first so we can attach reminders to your user.
-            </p>
-          )}
-          {userId && (
-            <>
-              <p className="text-muted small mb-2">
-                Get gentle reminders around meal times. Keep this tab open to receive notifications.
-              </p>
+          <p className="text-muted small mb-2">
+            Get gentle reminders around meal times. Keep this tab open to receive notifications.
+          </p>
               <div className="form-check form-switch mb-3">
                 <input
                   className="form-check-input"
@@ -181,13 +162,11 @@ export default function Settings() {
                   type="button"
                   className="btn btn-theme-primary btn-sm"
                   onClick={handleSaveReminders}
-                  disabled={savingSettings || loadingSettings || !userId}
+                  disabled={savingSettings || loadingSettings}
                 >
                   {savingSettings ? 'Saving…' : 'Save reminders'}
                 </button>
               </div>
-            </>
-          )}
         </div>
       </div>
 

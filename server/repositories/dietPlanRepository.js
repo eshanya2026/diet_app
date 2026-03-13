@@ -34,16 +34,21 @@ export async function findDietPlanById(planId) {
   }
 }
 
-export async function findDietPlansByUserId(userId) {
+const DEFAULT_HISTORY_LIMIT = 100;
+const MAX_HISTORY_LIMIT = 500;
+
+export async function findDietPlansByUserId(userId, options = {}) {
   let oid;
   try {
     oid = new ObjectId(userId);
   } catch {
     return [];
   }
+  const limit = Math.min(MAX_HISTORY_LIMIT, Math.max(1, Number(options.limit) || DEFAULT_HISTORY_LIMIT));
+  const skip = Math.max(0, Number(options.skip) || 0);
   const db = await getDb();
   const col = db.collection('diet_plans');
-  const cursor = col.find({ user_id: oid }).sort({ created_at: -1 });
+  const cursor = col.find({ user_id: oid }).sort({ created_at: -1 }).skip(skip).limit(limit);
   return cursor.toArray();
 }
 

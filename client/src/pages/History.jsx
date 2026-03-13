@@ -16,17 +16,13 @@ export default function History() {
   const [search, setSearch] = useState('');
 
   useEffect(() => {
-    const userId = sessionStorage.getItem('dietUserId');
-    if (!userId) {
-      setLoading(false);
-      setError('No user found. Generate a plan first to see history.');
-      return;
-    }
-    getHistory(userId)
+    getHistory()
       .then((res) => {
         if (res.success && Array.isArray(res.data)) setPlans(res.data);
       })
-      .catch(() => setError('Could not load history. Try again later.'))
+      .catch((err) => {
+        setError(err?.status === 401 ? 'Please log in again.' : 'Could not load history. Try again later.');
+      })
       .finally(() => setLoading(false));
   }, []);
 

@@ -5,6 +5,7 @@
 const GENDERS = ['male', 'female', 'other'];
 const ACTIVITY = ['low', 'medium', 'high'];
 const DIET = ['veg', 'non-veg', 'vegan'];
+const CUISINES = ['South Indian', 'North Indian', 'Kerala', 'Tamil', 'Andhra', 'Mixed'];
 const CONDITIONS = [
   'diabetes',
   'hypertension',
@@ -68,6 +69,9 @@ export function validateUserHealthPayload(payload) {
     errors.push('Goal must be weight loss, weight gain, or muscle gain.');
   }
 
+  const cuisinePreference = String(p.cuisine_preference ?? 'Mixed').trim();
+  const cuisine = CUISINES.includes(cuisinePreference) ? cuisinePreference : 'Mixed';
+
   if (errors.length > 0) {
     return { valid: false, errors, data: null };
   }
@@ -85,6 +89,7 @@ export function validateUserHealthPayload(payload) {
       diet_preference: dietPreference,
       health_conditions: normalizedConditions,
       goal,
+      cuisine_preference: cuisine,
     },
   };
 }

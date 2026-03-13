@@ -3,7 +3,7 @@
  */
 
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { generateGroceryList, swapMeal } from '../api/dietApi';
 import MacroChart from '../components/MacroChart';
 
@@ -22,6 +22,7 @@ const MEAL_SLOTS = [
 const DAY_LABELS = ['Day 1', 'Day 2', 'Day 3', 'Day 4', 'Day 5', 'Day 6', 'Day 7'];
 
 export default function DietResult() {
+  const navigate = useNavigate();
   const [data, setData] = useState(null);
   const [groceryItems, setGroceryItems] = useState(null);
   const [groceryLoading, setGroceryLoading] = useState(false);
@@ -33,11 +34,17 @@ export default function DietResult() {
   useEffect(() => {
     try {
       const raw = sessionStorage.getItem('latestDietResult');
-      if (raw) setData(JSON.parse(raw));
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (parsed && (parsed.diet_plan || parsed.user)) setData(parsed);
+        else navigate('/generate', { replace: true });
+      } else {
+        navigate('/generate', { replace: true });
+      }
     } catch {
-      setData(null);
+      navigate('/generate', { replace: true });
     }
-  }, []);
+  }, [navigate]);
 
   const handlePrint = () => window.print();
 
@@ -76,7 +83,15 @@ export default function DietResult() {
     if (!current || typeof current !== 'string' || !current.trim()) return;
     setSwapError('');
     setSwapLoadingSlot(slotKey);
-    swapMeal({ meal_slot: slotKey, current_meal: current })
+    const user = data?.user ?? {};
+    const payload = {
+      meal_slot: slotKey,
+      current_meal: current,
+      health_condition: user.health_conditions?.[0] ?? 'none',
+      cuisine_preference: user.cuisine_preference ?? 'Mixed',
+      diet_preference: user.diet_preference ?? 'veg',
+    };
+    swapMeal(payload)
       .then((res) => {
         if (!res?.success || !res?.data?.alternative_meal) {
           setSwapError(res?.error?.message ?? 'Could not get alternative.');
@@ -113,10 +128,7 @@ export default function DietResult() {
   if (data == null) {
     return (
       <div className="theme-bg min-vh-100 d-flex align-items-center justify-content-center">
-        <div className="text-center">
-          <p className="text-muted">No recent diet plan found.</p>
-          <Link to="/generate" className="btn btn-theme-primary">Generate a new plan</Link>
-        </div>
+        <p className="text-muted mb-0">Loading…</p>
       </div>
     );
   }

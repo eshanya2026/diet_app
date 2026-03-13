@@ -1,24 +1,18 @@
 /**
- * User settings routes: meal reminder preferences.
+ * User settings routes: meal reminder preferences. JWT required; user_id from token.
  */
 
 import { Router } from 'express';
 import { getUserSettings, upsertUserSettings } from '../repositories/userSettingsRepository.js';
+import { requireUserAuth } from '../middleware/userAuth.js';
 
-const OBJECT_ID_REGEX = /^[a-f0-9]{24}$/i;
 const TIME_REGEX = /^([01]\d|2[0-3]):[0-5]\d$/;
 
 export const settingsRouter = Router();
 
-settingsRouter.get('/', async (req, res) => {
+settingsRouter.get('/', requireUserAuth, async (req, res) => {
   try {
-    const userId = String(req.query.user_id ?? '').trim();
-    if (!userId || !OBJECT_ID_REGEX.test(userId)) {
-      return res.status(422).json({
-        success: false,
-        error: { code: 'VALIDATION_ERROR', message: 'user_id query parameter (Mongo ObjectId) is required.' },
-      });
-    }
+    const userId = req.userId;
     const settings = await getUserSettings(userId);
     return res.status(200).json({ success: true, data: settings });
   } catch (err) {
@@ -29,16 +23,10 @@ settingsRouter.get('/', async (req, res) => {
   }
 });
 
-settingsRouter.put('/', async (req, res) => {
+settingsRouter.put('/', requireUserAuth, async (req, res) => {
   try {
     const body = req.body ?? {};
-    const userId = String(body.user_id ?? '').trim();
-    if (!userId || !OBJECT_ID_REGEX.test(userId)) {
-      return res.status(422).json({
-        success: false,
-        error: { code: 'VALIDATION_ERROR', message: 'user_id is required and must be a valid ObjectId.' },
-      });
-    }
+    const userId = req.userId;
     const breakfast = String(body.breakfast_time ?? '').trim() || '08:00';
     const lunch = String(body.lunch_time ?? '').trim() || '13:00';
     const dinner = String(body.dinner_time ?? '').trim() || '20:00';

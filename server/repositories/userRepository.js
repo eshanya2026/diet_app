@@ -92,6 +92,26 @@ export async function deleteUserById(id) {
   }
 }
 
+export async function updateAuthUserById(userId, updates) {
+  const db = await getDb();
+  const col = db.collection('users');
+  try {
+    const oid = new ObjectId(userId);
+    const allowed = {};
+    if (updates.name !== undefined) allowed.name = String(updates.name ?? '').trim();
+    if (updates.password_hash !== undefined) allowed.password_hash = updates.password_hash;
+    if (Object.keys(allowed).length === 0) return null;
+    const result = await col.findOneAndUpdate(
+      { _id: oid, email: { $exists: true, $ne: '' } },
+      { $set: allowed },
+      { returnDocument: 'after' }
+    );
+    return result ?? null;
+  } catch {
+    return null;
+  }
+}
+
 export async function getDailyRegistrationCounts(days = 30) {
   const db = await getDb();
   const col = db.collection('users');

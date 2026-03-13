@@ -15,14 +15,6 @@ const SLOTS = [
   { key: 'dinner', label: 'Dinner', field: 'dinner_time', defaultTime: '20:00' },
 ];
 
-function getUserId() {
-  try {
-    return sessionStorage.getItem('dietUserId') ?? null;
-  } catch {
-    return null;
-  }
-}
-
 function getTodayKey() {
   const d = new Date();
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
@@ -66,14 +58,14 @@ export default function ReminderManager() {
   );
 
   useEffect(() => {
-    const userId = getUserId();
-    if (!userId) return;
     let cancelled = false;
-    getUserSettings(userId)
+    getUserSettings()
       .then((res) => {
         if (!cancelled && res?.success) setSettings(res.data);
       })
-      .catch(() => {});
+      .catch(() => {
+        if (!cancelled) setSettings({});
+      });
     return () => {
       cancelled = true;
     };

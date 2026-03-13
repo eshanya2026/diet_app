@@ -1,35 +1,25 @@
 /**
- * GET /api/history?user_id=... : list diet plans for user.
+ * GET /api/history : list diet plans for authenticated user (JWT required).
+ * Query: limit (default 100), skip (default 0).
  */
 
 import { Router } from 'express';
 import { findDietPlansByUserId } from '../repositories/dietPlanRepository.js';
 import { computeDietScore } from '../utils/dietScore.js';
 import { logger } from '../utils/logger.js';
-
-const OBJECT_ID_REGEX = /^[a-f0-9]{24}$/i;
+import { requireUserAuth } from '../middleware/userAuth.js';
 
 export const historyRouter = Router();
 
-historyRouter.get('/', async (req, res) => {
+historyRouter.get('/', requireUserAuth, async (req, res) => {
   try {
-    const userId = String(req.query.user_id ?? '').trim();
-    if (!userId) {
-      return res.status(422).json({
-        success: false,
-        error: { code: 'VALIDATION_ERROR', messages: ['user_id query parameter is required.'] },
-      });
-    }
-    if (!OBJECT_ID_REGEX.test(userId)) {
-      return res.status(422).json({
-        success: false,
-        error: { code: 'VALIDATION_ERROR', messages: ['user_id must be a valid MongoDB ObjectId.'] },
-      });
-    }
+    const userId = req.userId;
+    const limit = Math.min(500, Math.max(1, parseInt(req.query.limit, 10) || 100));
+    const skip = Math.max(0, parseInt(req.query.skip, 10) || 0);
 
     let plans;
     try {
-      plans = await findDietPlansByUserId(userId);
+      plans = await findDietPlansByUserId(userId, { limit, skip });
     } catch (err) {
       logger.warn('History: DB error, returning empty list', { message: err?.message ?? err });
       return res.status(200).json({ success: true, data: [], db_unavailable: true });

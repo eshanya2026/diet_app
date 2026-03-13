@@ -3,7 +3,7 @@
  */
 
 import { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { adminLogin, adminSeed, setAdminToken, getSystemHealth } from '../api/adminApi';
 
 export default function AdminLogin() {
@@ -126,7 +126,7 @@ export default function AdminLogin() {
             </button>
           </form>
           <p className="text-muted small mt-3 mb-0 text-center">
-            <a href="/" className="text-primary">Back to Diet AI</a>
+            <Link to="/login" className="text-primary">Back to Diet AI (user login)</Link>
           </p>
         </div>
       </div>

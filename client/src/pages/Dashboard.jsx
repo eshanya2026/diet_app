@@ -28,14 +28,6 @@ function getLatestResult() {
   }
 }
 
-function getUserId() {
-  try {
-    return sessionStorage.getItem('dietUserId') ?? null;
-  } catch {
-    return null;
-  }
-}
-
 function parseMinutes(timeStr) {
   if (!timeStr || typeof timeStr !== 'string') return null;
   const [hh, mm] = timeStr.split(':').map((v) => parseInt(v, 10));
@@ -77,7 +69,6 @@ function buildWeeklyBars(logs) {
 
 export default function Dashboard() {
   const lastResult = getLatestResult();
-  const userId = getUserId();
   const [weeklyBars, setWeeklyBars] = useState(() => WEEKDAYS.map((d) => ({ label: d, used: 0 })));
   const [overallCompliance, setOverallCompliance] = useState(0);
   const [nextMeal, setNextMeal] = useState({
@@ -85,10 +76,11 @@ export default function Dashboard() {
     timeDisplay: '1:00 PM',
     food: 'Brown rice + dal + salad',
   });
+  const [complianceError, setComplianceError] = useState(false);
 
   useEffect(() => {
-    if (!userId) return;
-    getCompliance(userId, { limit: 30 })
+    setComplianceError(false);
+    getCompliance({ limit: 30 })
       .then((res) => {
         if (!res?.success) return;
         const logs = Array.isArray(res.data) ? res.data : [];
@@ -97,11 +89,12 @@ export default function Dashboard() {
           setOverallCompliance(res.summary.overall_percent);
         }
       })
-      .catch(() => {});
-  }, [userId]);
+      .catch(() => setComplianceError(true));
+  }, []);
 
   useEffect(() => {
-    if (!lastResult) {
+    const result = getLatestResult();
+    if (!result) {
       setNextMeal({
         label: 'Lunch',
         timeDisplay: '1:00 PM',
@@ -110,7 +103,7 @@ export default function Dashboard() {
       return;
     }
 
-    const plan = lastResult.diet_plan ?? {};
+    const plan = result.diet_plan ?? {};
     const chart = plan.diet_chart ?? {};
     const isWeekly =
       plan.plan_type === 'weekly' || (Array.isArray(chart.days) && chart.days.length > 0);
@@ -167,12 +160,7 @@ export default function Dashboard() {
       return buildFromSlot(upcoming.slot, upcoming.time24);
     };
 
-    if (!userId) {
-      setNextMeal(chooseWithSettings(null));
-      return;
-    }
-
-    getUserSettings(userId)
+    getUserSettings()
       .then((res) => {
         if (cancelled) return;
         if (!res?.success) {
@@ -190,7 +178,7 @@ export default function Dashboard() {
     return () => {
       cancelled = true;
     };
-  }, [userId, lastResult]);
+  }, []);
 
   const dailyTarget = (() => {
     const calStr = lastResult?.diet_plan?.diet_chart?.calories;
@@ -366,6 +354,9 @@ export default function Dashboard() {
                   </div>
                 ))}
               </div>
+              {complianceError && (
+                <p className="small text-muted mb-0 mt-2">Compliance data could not be loaded. Check your connection or try again later.</p>
+              )}
             </div>
           </div>
         </div>

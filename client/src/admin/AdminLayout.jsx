@@ -1,8 +1,8 @@
 /**
- * Admin layout: sidebar navigation + main content.
+ * Admin layout: sidebar navigation + main content. Same Vite app/port as user app.
  */
 
-import { Link, useLocation, Outlet } from 'react-router-dom';
+import { Link, useLocation, useNavigate, Outlet } from 'react-router-dom';
 import { clearAdminToken } from '../api/adminApi';
 
 const SIDEBAR_LINKS = [
@@ -16,10 +16,11 @@ const SIDEBAR_LINKS = [
 
 export default function AdminLayout() {
   const location = useLocation();
+  const navigate = useNavigate();
 
   const handleLogout = () => {
     clearAdminToken();
-    window.location.href = '/admin/login';
+    navigate('/admin/login', { replace: true });
   };
 
   return (
@@ -38,7 +39,7 @@ export default function AdminLayout() {
           ))}
         </nav>
         <hr className="border-secondary my-3" />
-        <Link to="/" className="nav-link text-white-50 small">Back to App</Link>
+        <Link to="/login" className="nav-link text-white-50 small">Back to App</Link>
         <button type="button" className="btn btn-outline-light btn-sm mt-2 w-100" onClick={handleLogout}>
           Logout
         </button>

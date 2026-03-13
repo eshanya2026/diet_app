@@ -1,13 +1,14 @@
 /**
- * Diet compliance tracker: log and list daily meal adherence.
- * POST /api/compliance — log or update compliance for a day
- * GET /api/compliance?user_id=...&plan_id=...&from=...&to=...
+ * Diet compliance tracker: log and list daily meal adherence. JWT required; user_id from token.
+ * POST /api/compliance — log or update compliance for a day (body: plan_id, log_date?, meals)
+ * GET /api/compliance?plan_id=...&from=...&to=...&limit=...
  */
 
 import { Router } from 'express';
 import { findDietPlanById } from '../repositories/dietPlanRepository.js';
 import { upsertComplianceLog, findComplianceByUser } from '../repositories/complianceRepository.js';
 import { logger } from '../utils/logger.js';
+import { requireUserAuth } from '../middleware/userAuth.js';
 
 const OBJECT_ID_REGEX = /^[a-f0-9]{24}$/i;
 const DATE_REGEX = /^\d{4}-\d{2}-\d{2}$/;
@@ -24,19 +25,13 @@ function parseMeals(body) {
   return out;
 }
 
-complianceRouter.post('/', async (req, res) => {
+complianceRouter.post('/', requireUserAuth, async (req, res) => {
   try {
     const body = req.body ?? {};
-    const userId = String(body.user_id ?? '').trim();
+    const userId = req.userId;
     const planId = String(body.plan_id ?? '').trim();
     let logDate = String(body.log_date ?? '').trim();
 
-    if (!userId || !OBJECT_ID_REGEX.test(userId)) {
-      return res.status(422).json({
-        success: false,
-        error: { code: 'VALIDATION_ERROR', messages: ['user_id is required and must be a valid ObjectId.'] },
-      });
-    }
     if (!planId || !OBJECT_ID_REGEX.test(planId)) {
       return res.status(422).json({
         success: false,
@@ -110,16 +105,9 @@ complianceRouter.post('/', async (req, res) => {
   }
 });
 
-complianceRouter.get('/', async (req, res) => {
+complianceRouter.get('/', requireUserAuth, async (req, res) => {
   try {
-    const userId = String(req.query.user_id ?? '').trim();
-    if (!userId || !OBJECT_ID_REGEX.test(userId)) {
-      return res.status(422).json({
-        success: false,
-        error: { code: 'VALIDATION_ERROR', messages: ['user_id query is required and must be a valid ObjectId.'] },
-      });
-    }
-
+    const userId = req.userId;
     const planId = String(req.query.plan_id ?? '').trim() || undefined;
     const from = String(req.query.from ?? '').trim() || undefined;
     const to = String(req.query.to ?? '').trim() || undefined;

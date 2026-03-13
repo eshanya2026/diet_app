@@ -1,14 +1,19 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 
+// Use 127.0.0.1 to avoid IPv6/localhost resolution issues; ECONNRESET often happens when the server restarts (e.g. --watch).
+const API_TARGET = process.env.VITE_API_URL ?? 'http://127.0.0.1:5000';
+
 export default defineConfig({
   plugins: [react()],
   server: {
-    port: 3000,
+    port: 5173,
     proxy: {
       '/api': {
-        target: process.env.VITE_API_URL ?? 'http://localhost:5000',
+        target: API_TARGET,
         changeOrigin: true,
+        secure: false,
+        timeout: 30000,
       },
     },
   },

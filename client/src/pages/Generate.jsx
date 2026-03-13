@@ -5,6 +5,7 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import PageHeader from '../components/PageHeader';
+import { useAuth } from '../context/AuthContext';
 import { generateDiet, checkHealth } from '../api/dietApi';
 
 const ACTIVITY_OPTIONS = [
@@ -33,8 +34,18 @@ const PLAN_TYPE_OPTIONS = [
   { value: 'weekly', label: 'Weekly (7 days)' },
 ];
 
+const CUISINE_OPTIONS = [
+  { value: 'Mixed', label: 'Any / Mixed' },
+  { value: 'South Indian', label: 'South Indian' },
+  { value: 'North Indian', label: 'North Indian' },
+  { value: 'Kerala', label: 'Kerala' },
+  { value: 'Tamil', label: 'Tamil' },
+  { value: 'Andhra', label: 'Andhra' },
+];
+
 export default function Generate() {
   const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [form, setForm] = useState({
@@ -47,6 +58,7 @@ export default function Generate() {
     diet_preference: '',
     health_conditions: [],
     goal: '',
+    cuisine_preference: 'Mixed',
     plan_type: 'daily',
   });
 
@@ -70,11 +82,16 @@ export default function Generate() {
     setLoading(true);
     try {
       const conditions = form.health_conditions.length ? form.health_conditions : ['none'];
-      const payload = { ...form, health_conditions: conditions, plan_type: form.plan_type || 'daily' };
-      const res = await generateDiet(payload);
+      const payload = {
+        ...form,
+        health_conditions: conditions,
+        cuisine_preference: form.cuisine_preference ?? 'Mixed',
+        plan_type: form.plan_type || 'daily',
+      };
+      const res = await generateDiet(payload, isAuthenticated);
       if (res.success && res.data) {
         sessionStorage.setItem('latestDietResult', JSON.stringify(res.data));
-        if (res.data.user?.id) sessionStorage.setItem('dietUserId', res.data.user.id);
+        if (!isAuthenticated && res.data.user?.id) sessionStorage.setItem('dietUserId', res.data.user.id);
         navigate('/result');
       } else {
         setError('Could not generate diet plan. Please try again.');
@@ -177,6 +194,12 @@ export default function Generate() {
                 ))}
               </div>
               <div className="form-text text-muted">Select all that apply. If none, choose &quot;None of the above&quot;.</div>
+            </div>
+            <div className="col-12 col-md-6">
+              <label htmlFor="cuisine_preference" className="form-label theme-text">Cuisine preference</label>
+              <select className="form-select theme-input" id="cuisine_preference" name="cuisine_preference" value={form.cuisine_preference ?? 'Mixed'} onChange={handleChange}>
+                {CUISINE_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
+              </select>
             </div>
             <div className="col-12 col-md-6">
               <label htmlFor="goal" className="form-label theme-text">Goal</label>

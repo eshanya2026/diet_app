@@ -87,13 +87,8 @@ export default function Water() {
   }, [goalMl]);
 
   useEffect(() => {
-    const userId = getUserId();
-    if (!userId) {
-      setReminderStatus(null);
-      return;
-    }
     setReminderStatusLoading(true);
-    getUserSettings(userId)
+    getUserSettings()
       .then((res) => {
         if (res?.success && res.data) {
           setReminderStatus(typeof res.data.water_reminders_enabled === 'boolean' ? res.data.water_reminders_enabled : false);

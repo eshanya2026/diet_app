@@ -6,7 +6,9 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "dev": "node --watch index.js"
+    "dev": "node --watch index.js",
+    "seed-foods": "node scripts/seedFoods.js",
+    "seed-profiles": "node scripts/seedProfiles.js"
   },
   "dependencies": {
     "bcryptjs": "^3.0.3",

@@ -148,7 +148,6 @@ function getGoalImpactMessage(goal, percent) {
 }
 
 export default function Compliance() {
-  const [userId, setUserId] = useState('');
   const [plans, setPlans] = useState([]);
   const [logs, setLogs] = useState([]);
   const [summary, setSummary] = useState(null);
@@ -163,20 +162,18 @@ export default function Compliance() {
     meals: { breakfast: false, mid_snack: false, lunch: false, evening_snack: false, dinner: false },
   });
 
-  const fetchPlans = useCallback(async (uid) => {
-    if (!uid) return [];
+  const fetchPlans = useCallback(async () => {
     try {
-      const res = await getHistory(uid);
+      const res = await getHistory();
       return res?.success && Array.isArray(res.data) ? res.data : [];
     } catch {
       return [];
     }
   }, []);
 
-  const fetchCompliance = useCallback(async (uid) => {
-    if (!uid) return { data: [], summary: null };
+  const fetchCompliance = useCallback(async () => {
     try {
-      const res = await getCompliance(uid, { limit: 30 });
+      const res = await getCompliance({ limit: 30 });
       return { data: res?.data ?? [], summary: res?.summary ?? null };
     } catch {
       return { data: [], summary: null };
@@ -184,20 +181,11 @@ export default function Compliance() {
   }, []);
 
   useEffect(() => {
-    const uid = sessionStorage.getItem('dietUserId') ?? '';
-    setUserId(uid);
-    if (!uid) {
-      setLoading(false);
-      setPlans([]);
-      setLogs([]);
-      setSummary(null);
-      return;
-    }
     let cancelled = false;
     (async () => {
       const [planList, { data: logData, summary: sum }] = await Promise.all([
-        fetchPlans(uid),
-        fetchCompliance(uid),
+        fetchPlans(),
+        fetchCompliance(),
       ]);
       if (!cancelled) {
         setPlans(planList);
@@ -224,10 +212,6 @@ export default function Compliance() {
     e.preventDefault();
     setError('');
     setSuccess('');
-    if (!userId) {
-      setError('Generate a diet plan first so we know who you are.');
-      return;
-    }
     if (!form.plan_id) {
       setError('Select a diet plan to track against.');
       return;
@@ -235,14 +219,13 @@ export default function Compliance() {
     setSubmitLoading(true);
     try {
       const res = await logCompliance({
-        user_id: userId,
         plan_id: form.plan_id,
         log_date: form.log_date,
         meals: form.meals,
       });
       if (res?.success && res?.data) {
         setSuccess(`Saved: ${res.data.summary?.followed ?? 0}/5 meals followed for ${formatDate(form.log_date)}.`);
-        const { data: logData, summary: sum } = await fetchCompliance(userId);
+        const { data: logData, summary: sum } = await fetchCompliance();
         setLogs(logData);
         setSummary(sum);
       } else {
@@ -268,7 +251,7 @@ export default function Compliance() {
     );
   }
 
-  if (!userId) {
+  if (!loading && plans.length === 0) {
     return (
       <div className="theme-bg">
         <PageHeader title="Compliance Tracker" description="Track your daily diet adherence." />
