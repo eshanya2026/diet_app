@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Settings - Pro Wellness</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#f42559",
+                        "background-light": "#f8f5f6",
+                        "background-dark": "#221014",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .active-nav { @apply bg-primary/10 text-primary border-r-4 border-primary; }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen">
+<div class="flex flex-col min-h-screen">
+<!-- Top Navigation -->
+<header class="sticky top-0 z-50 flex items-center justify-between border-b border-primary/10 bg-white/80 dark:bg-background-dark/80 backdrop-blur-md px-6 py-3">
+<div class="flex items-center gap-3">
+<div class="flex items-center justify-center size-10 rounded-xl bg-primary text-white">
+<span class="material-symbols-outlined">database</span>
+</div>
+<h2 class="text-xl font-bold tracking-tight text-slate-900 dark:text-slate-100">Pro Wellness</h2>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 rounded-lg bg-primary/5 text-slate-600 hover:bg-primary/10 transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<div class="h-10 w-10 rounded-full bg-primary/20 border border-primary/20 overflow-hidden" data-alt="User profile avatar headshot">
+<img alt="Profile" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBr8eEmIN_cFPvcLcrwxLG8tM4WABdxlZDH_Ptl_ogkW6m8rGuGrl02pjv8lB2Xc9nkSUPAV140SF4-2D3SGNx3EdqX9e1zu5rPJ04XFIvhF5-yg6__XIxPay2KzTs8yJ7yITaIRx55jnTHhv6WbYD3qZTWhbOFa2evWtRIeBiXiciiXF4z55fXG7sHKjALjNrQEQvJgfVZn1NC_TkCKGNdb-4jeQDh_cf_90DMnQeBeOZeVv9hebvifKwM5fIwYd_FZ3m5o2xb95A"/>
+</div>
+</div>
+</header>
+<div class="flex flex-1 max-w-7xl mx-auto w-full px-6 py-8 gap-8">
+<!-- Sidebar Navigation -->
+<aside class="w-64 shrink-0 hidden md:flex flex-col gap-2">
+<div class="mb-4">
+<h3 class="text-xs font-semibold text-primary uppercase tracking-widest px-4 mb-2">Main Menu</h3>
+<nav class="flex flex-col gap-1">
+<a class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-slate-600 hover:bg-primary/5 transition-colors" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-medium">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-slate-600 hover:bg-primary/5 transition-colors" href="#">
+<span class="material-symbols-outlined">fitness_center</span>
+<span class="font-medium">Workouts</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-slate-600 hover:bg-primary/5 transition-colors" href="#">
+<span class="material-symbols-outlined">restaurant</span>
+<span class="font-medium">Nutrition</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-slate-600 hover:bg-primary/5 transition-colors" href="#">
+<span class="material-symbols-outlined">insights</span>
+<span class="font-medium">Insights</span>
+</a>
+</nav>
+</div>
+<div>
+<h3 class="text-xs font-semibold text-primary uppercase tracking-widest px-4 mb-2">System</h3>
+<nav class="flex flex-col gap-1">
+<a class="flex items-center gap-3 px-4 py-2.5 rounded-lg bg-primary/10 text-primary border-r-4 border-primary" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-medium">Settings</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-slate-600 hover:bg-primary/5 transition-colors" href="#">
+<span class="material-symbols-outlined">help</span>
+<span class="font-medium">Support</span>
+</a>
+</nav>
+</div>
+<div class="mt-auto p-4 rounded-xl bg-primary/5 border border-primary/10">
+<p class="text-xs text-slate-500 mb-2">Current Plan</p>
+<p class="text-sm font-bold text-slate-900 mb-3">Premium Pro Plan</p>
+<button class="w-full py-2 bg-primary text-white text-xs font-bold rounded-lg shadow-lg shadow-primary/20">Manage Subscription</button>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 max-w-3xl">
+<div class="mb-8">
+<h1 class="text-3xl font-black text-slate-900 dark:text-slate-100 tracking-tight">Settings</h1>
+<p class="text-slate-500 mt-1">Manage your health journey and account preferences.</p>
+</div>
+<div class="space-y-6">
+<!-- Account Section -->
+<section class="bg-white dark:bg-background-dark border border-primary/10 rounded-xl overflow-hidden shadow-sm">
+<div class="px-6 py-4 border-b border-primary/5 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">person</span>
+<h2 class="font-bold text-slate-800 dark:text-slate-200">Account</h2>
+</div>
+<div class="p-6 space-y-4">
+<div class="flex items-center justify-between group cursor-pointer">
+<div class="flex items-center gap-4">
+<div class="size-14 rounded-full bg-slate-100 dark:bg-slate-800 border-2 border-primary/20 overflow-hidden" data-alt="User profile photo preview">
+<img alt="Avatar" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDcXmpqzGoobvomw7WM-EO0oRBhPth9TIyqigYqqqu3o6KXs7Q7KaB58pyKf1uaLm5r0DkCNikVD3YgnNsxsALCecVwesXCsain8pjBc4sgQvmMPtCPrmz1T9J6V9ET7C7UgCZWiiZjIc9yJAZygmvedAVhFIu2ETDNt80H78hZvVuFWiqGxELMkUnkWQyMeS3AoWiXkirYbrKLj2PypFe1Bbrrd3D6QtS9mF8M_X-tb2EipnY8hppvG4H0gFSFuythtWJ9utb5qQ0"/>
+</div>
+<div>
+<p class="font-semibold text-slate-900 dark:text-slate-100">Jane Smith</p>
+<p class="text-sm text-slate-500">jane.smith@example.com</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-slate-400 group-hover:text-primary transition-colors">edit</span>
+</div>
+<hr class="border-primary/5"/>
+<div class="flex items-center justify-between cursor-pointer group">
+<div>
+<p class="font-medium text-slate-900 dark:text-slate-100">Change Password</p>
+<p class="text-xs text-slate-500">Last updated 3 months ago</p>
+</div>
+<span class="material-symbols-outlined text-slate-400 group-hover:text-primary transition-colors">chevron_right</span>
+</div>
+</div>
+</section>
+<!-- Notifications Section -->
+<section class="bg-white dark:bg-background-dark border border-primary/10 rounded-xl overflow-hidden shadow-sm">
+<div class="px-6 py-4 border-b border-primary/5 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">notifications_active</span>
+<h2 class="font-bold text-slate-800 dark:text-slate-200">Notifications</h2>
+</div>
+<div class="p-6 space-y-6">
+<div class="flex items-center justify-between">
+<div>
+<p class="font-medium text-slate-900 dark:text-slate-100">Meal Reminders</p>
+<p class="text-sm text-slate-500">Get alerted when it's time for your planned meals.</p>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+<div class="flex items-center justify-between">
+<div>
+<p class="font-medium text-slate-900 dark:text-slate-100">Water Reminders</p>
+<p class="text-sm text-slate-500">Nudges to keep you hydrated throughout the day.</p>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+<div class="flex items-center justify-between">
+<div>
+<p class="font-medium text-slate-900 dark:text-slate-100">Weekly Progress Report</p>
+<p class="text-sm text-slate-500">Summary of your activity and nutrition every Monday.</p>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+</div>
+</section>
+<!-- Appearance Section -->
+<section class="bg-white dark:bg-background-dark border border-primary/10 rounded-xl overflow-hidden shadow-sm">
+<div class="px-6 py-4 border-b border-primary/5 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">palette</span>
+<h2 class="font-bold text-slate-800 dark:text-slate-200">Appearance</h2>
+</div>
+<div class="p-6">
+<div class="grid grid-cols-3 gap-4">
+<button class="flex flex-col items-center gap-2 p-3 border-2 border-primary bg-primary/5 rounded-xl">
+<div class="w-full h-16 bg-background-light rounded-lg border border-primary/20 flex items-center justify-center">
+<div class="w-3/4 h-2 bg-slate-200 rounded-full"></div>
+</div>
+<span class="text-xs font-bold text-primary">Light</span>
+</button>
+<button class="flex flex-col items-center gap-2 p-3 border-2 border-transparent hover:border-primary/20 rounded-xl transition-all">
+<div class="w-full h-16 bg-background-dark rounded-lg border border-slate-700 flex items-center justify-center">
+<div class="w-3/4 h-2 bg-slate-600 rounded-full"></div>
+</div>
+<span class="text-xs font-medium text-slate-500">Dark</span>
+</button>
+<button class="flex flex-col items-center gap-2 p-3 border-2 border-transparent hover:border-primary/20 rounded-xl transition-all">
+<div class="w-full h-16 bg-gradient-to-br from-background-light to-background-dark rounded-lg border border-slate-300 flex items-center justify-center overflow-hidden">
+<div class="w-3/4 h-2 bg-slate-400 rounded-full"></div>
+</div>
+<span class="text-xs font-medium text-slate-500">System</span>
+</button>
+</div>
+</div>
+</section>
+<!-- Data Management Section -->
+<section class="bg-white dark:bg-background-dark border border-primary/10 rounded-xl overflow-hidden shadow-sm">
+<div class="px-6 py-4 border-b border-primary/5 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">data_usage</span>
+<h2 class="font-bold text-slate-800 dark:text-slate-200">Data Management</h2>
+</div>
+<div class="p-6 space-y-4">
+<div class="flex items-center justify-between">
+<div>
+<p class="font-medium text-slate-900 dark:text-slate-100">Export Health Data</p>
+<p class="text-sm text-slate-500">Download your history in CSV or JSON format.</p>
+</div>
+<button class="px-4 py-2 border border-primary/30 text-primary font-bold text-sm rounded-lg hover:bg-primary/5 transition-colors">Export</button>
+</div>
+<hr class="border-primary/5"/>
+<div class="flex items-center justify-between">
+<div>
+<p class="font-medium text-slate-900 dark:text-slate-100">Clear Cache</p>
+<p class="text-sm text-slate-500">Free up space by removing temporary files.</p>
+</div>
+<button class="px-4 py-2 text-slate-500 font-bold text-sm rounded-lg hover:bg-slate-100 transition-colors">Clear</button>
+</div>
+<hr class="border-primary/5"/>
+<div class="bg-red-50 dark:bg-red-950/20 p-4 rounded-lg flex items-center justify-between mt-4">
+<div>
+<p class="font-bold text-red-600 dark:text-red-400">Delete Account</p>
+<p class="text-xs text-red-500 dark:text-red-500/80">Permanently remove all your data. This cannot be undone.</p>
+</div>
+<button class="px-4 py-2 bg-red-600 text-white font-bold text-sm rounded-lg hover:bg-red-700 transition-colors">Delete</button>
+</div>
+</div>
+</section>
+</div>
+<footer class="mt-12 text-center text-slate-400 text-sm pb-8">
+<p>© 2024 Pro Wellness App. Version 2.4.1</p>
+<div class="flex justify-center gap-4 mt-2">
+<a class="hover:text-primary transition-colors" href="#">Privacy Policy</a>
+<span>•</span>
+<a class="hover:text-primary transition-colors" href="#">Terms of Service</a>
+</div>
+</footer>
+</main>
+</div>
+</div>
+</body></html>

@@ -296,222 +296,253 @@ export default function Compliance() {
   };
 
   return (
-    <div className="theme-bg">
-      <PageHeader
-        title="Compliance Tracker"
-        description="Log which meals you followed each day and see your adherence over time."
-      />
+    <div className="flex-1 min-w-0 overflow-y-auto font-display">
+      <header className="mb-8 p-8 pb-0">
+        <h1 className="text-4xl font-bold text-slate-900 dark:text-white">Compliance Tracker</h1>
+        <p className="text-slate-500 dark:text-slate-400 mt-1 font-medium">Track your dietary adherence and reach your goals.</p>
+      </header>
 
-      {summary && (
-        <>
-          <div className="row g-3 mb-4">
-            <div className="col-6 col-lg">
-              <div className="card theme-card shadow-theme h-100">
-                <div className="card-body py-3 text-center">
-                  <div className="text-muted small text-uppercase mb-1">Days logged</div>
-                  <div className="h3 mb-0 theme-text fw-bold">{summary.days_logged ?? 0}</div>
-                </div>
-              </div>
-            </div>
-            <div className="col-6 col-lg">
-              <div className="card theme-card shadow-theme h-100">
-                <div className="card-body py-3 text-center">
-                  <div className="text-muted small text-uppercase mb-1">Meals followed</div>
-                  <div className="h3 mb-0 theme-text fw-bold">{summary.total_meals_followed ?? 0}<span className="fw-normal text-muted small"> / {summary.total_meals_possible ?? 0}</span></div>
-                </div>
-              </div>
-            </div>
-            <div className="col-6 col-lg">
-              <div className="card theme-card shadow-theme h-100">
-                <div className="card-body py-3 text-center">
-                  <div className="text-muted small text-uppercase mb-1">Adherence</div>
-                  <div className="h3 mb-0 theme-text fw-bold">{summary.overall_percent ?? 0}%</div>
-                </div>
-              </div>
-            </div>
-            <div className="col-6 col-lg">
-              <div className="card theme-card shadow-theme h-100">
-                <div className="card-body py-3 text-center">
-                  <div className="text-muted small text-uppercase mb-1">This week</div>
-                  <div className="h3 mb-0 theme-text fw-bold">{weekProgress.count}<span className="fw-normal text-muted small"> / {weekProgress.goal}</span></div>
-                </div>
-              </div>
-            </div>
-            <div className="col-6 col-lg">
-              <div className="card theme-card shadow-theme h-100">
-                <div className="card-body py-3 text-center">
-                  <div className="text-muted small text-uppercase mb-1">Current streak</div>
-                  <div className="h3 mb-0 theme-text fw-bold">{streak} day{streak !== 1 ? 's' : ''}</div>
-                </div>
-              </div>
+      <main className="p-8 pt-0">
+        {/* Quick Stats Row from code.html */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+          <div className="bg-white dark:bg-background-dark/30 p-6 rounded-2xl border border-primary/5 shadow-sm">
+            <p className="text-xs text-slate-500 font-bold mb-1 uppercase tracking-widest">Days Logged</p>
+            <div className="flex items-baseline gap-2">
+              <span className="text-3xl font-bold text-slate-900 dark:text-white">{summary?.days_logged ?? 0}</span>
+              <span className="text-[10px] font-bold text-emerald-500 bg-emerald-500/10 px-1.5 py-0.5 rounded uppercase">Live</span>
             </div>
           </div>
-
-          <div className="card theme-card shadow-theme mb-4 overflow-hidden" style={{ borderLeft: '4px solid var(--theme-primary)', background: 'linear-gradient(135deg, var(--theme-card-bg) 0%, var(--theme-bg-secondary) 100%)' }}>
-            <div className="card-body py-4 d-flex flex-column flex-md-row align-items-center gap-3">
-              <div className="d-flex align-items-center justify-content-center rounded-circle bg-primary bg-opacity-10 flex-shrink-0" style={{ width: 64, height: 64 }}>
-                <span className="fs-2" role="img" aria-label="Trophy">🏆</span>
-              </div>
-              <div className="flex-grow-1 text-center text-md-start">
-                <div className="small text-muted text-uppercase fw-semibold mb-1">Best streak</div>
-                <div className="h2 mb-1 theme-text fw-bold">{bestStreak} day{bestStreak !== 1 ? 's' : ''}</div>
-                <p className="small text-muted mb-0">Longest run of consecutive days you logged. Beat your record by staying consistent.</p>
-              </div>
-              <span className="badge bg-primary rounded-pill px-3 py-2 flex-shrink-0" style={{ fontSize: '1.1rem' }}>
-                {bestStreak} day{bestStreak !== 1 ? 's' : ''}
+          <div className="bg-white dark:bg-background-dark/30 p-6 rounded-2xl border border-primary/5 shadow-sm">
+            <p className="text-xs text-slate-500 font-bold mb-1 uppercase tracking-widest">Meals Followed</p>
+            <div className="flex items-baseline gap-2">
+              <span className="text-3xl font-bold text-slate-900 dark:text-white">
+                {summary?.total_meals_followed ?? 0}
+                <span className="text-slate-400 text-lg font-medium ml-1">/ {summary?.total_meals_possible ?? 0}</span>
               </span>
             </div>
           </div>
-        </>
-      )}
-
-      {plans.length > 0 && (
-        <div className="card theme-card shadow-theme mb-4" style={{ borderLeft: '4px solid var(--theme-accent)' }}>
-          <div className="card-body">
-            <h2 className="h6 fw-semibold theme-text mb-2">Goal impact</h2>
-            <p className="mb-1 theme-text small">
-              <span className="text-muted">Your goal: </span>
-              <strong>{goalLabel}</strong>
-            </p>
-            <p className="mb-0 theme-text small">
-              {getGoalImpactMessage(goal, adherencePercent)}
-            </p>
-            {summary && (
-              <p className="mb-0 mt-2 text-muted small">
-                Recent adherence: <strong className="theme-text">{adherencePercent}%</strong>
-                {adherencePercent >= 70 && ' — keep it up!'}
-              </p>
-            )}
+          <div className="bg-white dark:bg-background-dark/30 p-6 rounded-2xl border border-primary/5 shadow-sm">
+            <p className="text-xs text-slate-500 font-bold mb-1 uppercase tracking-widest">Adherence %</p>
+            <div className="flex items-baseline gap-2">
+              <span className="text-3xl font-bold text-slate-900 dark:text-white">{summary?.overall_percent ?? 0}%</span>
+              <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase ${adherencePercent >= 80 ? 'bg-emerald-100 text-emerald-700' : 'bg-[rgb(244,37,89)]/10 !text-[rgb(244,37,89)]'}`}>
+                {adherencePercent >= 80 ? 'Excellent' : adherencePercent >= 50 ? 'Good' : 'Keep Going'}
+              </span>
+            </div>
+          </div>
+          <div className="bg-white dark:bg-background-dark/30 p-6 rounded-2xl border border-primary/5 shadow-sm">
+            <p className="text-xs text-slate-500 font-bold mb-1 uppercase tracking-widest">Current Streak</p>
+            <div className="flex items-baseline gap-2">
+              <span className="text-3xl font-bold text-slate-900 dark:text-white">{streak} Days</span>
+              {streak > 5 && <span className="material-symbols-outlined !text-[rgb(244,37,89)] text-xl" style={{ fontVariationSettings: "'FILL' 1" }}>local_fire_department</span>}
+            </div>
           </div>
         </div>
-      )}
 
-      <div className="card theme-card shadow-theme mb-4">
-        <div className="card-body">
-          <div className="d-flex align-items-center gap-2 mb-3">
-            <IconChartBar className="theme-text opacity-85" width={22} height={22} aria-hidden />
-            <h2 className="h6 fw-semibold theme-text mb-0">Weekly adherence</h2>
-          </div>
-          {!hasWeeklyData ? (
-            <p className="text-muted small mb-0">Log compliance for a few days to see your pattern by weekday (Mon–Sun).</p>
-          ) : (
-            <div className="d-flex align-items-end justify-content-between gap-2" style={{ minHeight: 140 }}>
-              {weeklyAdherence.map(({ day, percent }) => (
-                <div key={day} className="d-flex flex-column align-items-center flex-grow-1">
-                  <div className="dashboard-compliance-bar w-100 mb-1" style={{ maxWidth: 36 }}>
-                    <div className="dashboard-compliance-remaining" style={{ height: `${100 - (percent ?? 0)}%` }} />
-                    <div className="dashboard-compliance-used" style={{ height: `${percent ?? 0}%` }} />
-                  </div>
-                  <span className="small text-muted">{day}</span>
-                  <span className="small fw-semibold theme-text">{percent != null ? `${percent}%` : '—'}</span>
-                </div>
-              ))}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Left Column: Insights & Charts */}
+          <div className="lg:col-span-2 space-y-8">
+            {/* Achievement Card from code.html */}
+            <div className="bg-white dark:bg-background-dark/30 rounded-2xl overflow-hidden shadow-sm border border-primary/5 flex flex-col md:flex-row">
+            <div className="md:w-1/4 bg-[rgb(244,37,89)]/5 flex items-center justify-center p-6">
+              <div className="w-20 h-20 rounded-full bg-[rgb(244,37,89)]/20 flex items-center justify-center border-4 border-[rgb(244,37,89)]/10 shadow-inner">
+                <span className="material-symbols-outlined text-4xl !text-[rgb(244,37,89)]" style={{ fontVariationSettings: "'FILL' 1" }}>emoji_events</span>
+              </div>
             </div>
-          )}
-        </div>
-      </div>
+              <div className="p-6 md:w-3/4 flex flex-col justify-center">
+                <p className="text-primary text-[9px] font-bold uppercase tracking-widest mb-1">Achievement Unlocked</p>
+                <h3 className="text-lg font-bold mb-1 text-slate-900 dark:text-white">Best Streak: {bestStreak} Days</h3>
+                <p className="text-slate-500 dark:text-slate-400 text-xs mb-4 leading-relaxed font-medium">
+                  {bestStreak > 0 ? "You're doing amazing! Keep maintaining your consistency to reach your weight loss goal faster." : "Start logging today to begin your journey and earn your first streak achievement!"}
+                </p>
+                <button className="!bg-[rgb(244,37,89)] text-white text-[9px] font-bold uppercase tracking-widest px-5 py-2 rounded-lg self-start hover:scale-[1.05] transition-all shadow-md">
+                  View History
+                </button>
+              </div>
+            </div>
 
-      <div className="card theme-card shadow-theme mb-4">
-        <div className="card-body">
-          <div className="d-flex align-items-center gap-2 mb-3">
-            <IconChecklist className="theme-text opacity-85" width={22} height={22} aria-hidden />
-            <h2 className="h6 fw-semibold theme-text mb-0">Log today</h2>
-          </div>
-          <form onSubmit={handleSubmit} className="row g-3">
-            <div className="col-12 col-md-4">
-              <label htmlFor="compliance-plan" className="form-label theme-text small fw-semibold">Diet plan</label>
-              <select
-                id="compliance-plan"
-                className="form-select theme-input"
-                value={form.plan_id}
-                onChange={(e) => setForm((f) => ({ ...f, plan_id: e.target.value }))}
-                required
-              >
-                <option value="">Select plan</option>
-                {plans.map((p) => (
-                  <option key={p.id ?? p.created_at} value={p.id ?? ''}>
-                    {formatDate(p.created_at?.slice(0, 10))} — BMI {p.bmi ?? '—'}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className="col-12 col-md-4">
-              <label htmlFor="compliance-date" className="form-label theme-text small fw-semibold">Date</label>
-              <input
-                id="compliance-date"
-                type="date"
-                className="form-control theme-input"
-                value={form.log_date}
-                onChange={(e) => setForm((f) => ({ ...f, log_date: e.target.value || todayStr() }))}
-                max={todayStr()}
-              />
-            </div>
-            <div className="col-12">
-              <span className="form-label theme-text small fw-semibold d-block mb-2">Meals followed</span>
-              <div className="row g-2">
-                {MEAL_LABELS.map(({ key, label }) => (
-                  <div key={key} className="col-6 col-md-4">
-                    <div className="form-check theme-card rounded px-3 py-2" style={{ minHeight: 44 }}>
-                      <input
-                        id={`meal-${key}`}
-                        type="checkbox"
-                        className="form-check-input mt-1"
-                        checked={form.meals[key] ?? false}
-                        onChange={() => handleMealChange(key)}
-                      />
-                      <label className="form-check-label theme-text w-100 cursor-pointer" htmlFor={`meal-${key}`}>
-                        {label}
-                      </label>
+            {/* Weekly Adherence Chart from code.html */}
+            <div className="bg-white dark:bg-background-dark/30 p-6 rounded-2xl border border-primary/5 shadow-sm">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="font-bold text-lg text-slate-900 dark:text-white">Weekly Adherence</h3>
+                <span className="text-[9px] text-slate-400 uppercase tracking-widest font-bold">Current Week</span>
+              </div>
+              <div className="flex items-end justify-between h-40 gap-2">
+                {weeklyAdherence.map(({ day, percent }) => (
+                  <div key={day} className="flex-1 flex flex-col items-center gap-2 h-full">
+                    <div className="w-full bg-[rgb(244,37,89)]/5 rounded-t-lg relative group h-full flex items-end overflow-hidden">
+                      <div
+                        className={`w-full rounded-t-lg transition-all duration-700 ${percent === null ? 'bg-slate-100 dark:bg-slate-800' : (percent >= 80 ? 'bg-emerald-500' : 'bg-[rgb(244,37,89)]')}`}
+                        style={{ height: `${percent ?? 5}%` }}
+                      ></div>
+                      <div className="absolute -top-7 left-1/2 -translate-x-1/2 bg-slate-900 text-white text-[9px] py-1 px-1.5 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10 font-bold shadow-lg">
+                        {percent != null ? `${percent}%` : 'Pending'}
+                      </div>
                     </div>
+                    <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">{day[0]}</span>
                   </div>
                 ))}
               </div>
             </div>
-            {error && <div className="col-12"><div className="alert alert-danger mb-0 small">{error}</div></div>}
-            {success && <div className="col-12"><div className="alert alert-success mb-0 small">{success}</div></div>}
-            <div className="col-12">
-              <button type="submit" className="btn btn-theme-primary px-4" disabled={submitLoading}>
-                {submitLoading ? 'Saving…' : 'Save compliance'}
-              </button>
-            </div>
-          </form>
-        </div>
-      </div>
 
-      <div className="card theme-card shadow-theme">
-        <div className="card-body">
-          <div className="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
-            <h2 className="h6 fw-semibold theme-text mb-0">Recent logs</h2>
+            {/* Goal Impact Section from code.html */}
+            <div className="bg-white dark:bg-background-dark/30 p-6 rounded-2xl border border-primary/5 shadow-sm">
+              <div className="flex flex-col md:flex-row items-center gap-6">
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-3 mb-2">
+                    <div className="size-8 rounded-lg bg-[rgb(244,37,89)]/10 flex items-center justify-center !text-[rgb(244,37,89)]">
+                      <span className="material-symbols-outlined font-bold text-lg">trending_up</span>
+                    </div>
+                    <h3 className="font-bold text-lg text-slate-900 dark:text-white uppercase">Goal Impact: {goalLabel}</h3>
+                  </div>
+                  <p className="text-slate-500 dark:text-slate-400 text-xs leading-relaxed font-medium">
+                    {getGoalImpactMessage(goal, adherencePercent)}
+                  </p>
+                </div>
+                <Link to="/history" className="flex items-center gap-1.5 !text-[rgb(244,37,89)] font-bold text-[9px] hover:underline whitespace-nowrap uppercase tracking-widest group">
+                  Detailed Progress
+                  <span className="material-symbols-outlined text-xs group-hover:translate-x-1 transition-transform">arrow_forward</span>
+                </Link>
+              </div>
+            </div>
+          </div>
+
+          {/* Right Column: Actions */}
+          <div className="space-y-8">
+            {/* Log Today Section from code.html */}
+            <div className="bg-white dark:bg-background-dark/30 p-6 rounded-2xl border border-primary/5 shadow-sm">
+              <h3 className="text-lg font-bold mb-4 text-slate-900 dark:text-white tracking-tight">Log Today</h3>
+              <form onSubmit={handleSubmit} className="space-y-4">
+                <div className="space-y-1.5">
+                  <label htmlFor="compliance-plan" className="text-[9px] font-bold text-slate-400 uppercase tracking-widest ml-1">Diet Plan</label>
+                  <select
+                    id="compliance-plan"
+                    className="!w-full !block h-10 rounded-lg border-primary/10 bg-primary/[0.03] text-xs font-semibold focus:border-primary focus:ring-primary dark:text-white px-3"
+                    value={form.plan_id}
+                    onChange={(e) => setForm((f) => ({ ...f, plan_id: e.target.value }))}
+                    required
+                  >
+                    <option value="">Select plan</option>
+                    {plans.map((p) => (
+                      <option key={p.id ?? p.created_at} value={p.id ?? ''}>
+                        {formatDate(p.created_at?.slice(0, 10))} — BMI {p.bmi ?? '—'}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className="space-y-1.5">
+                  <label htmlFor="compliance-date" className="text-[9px] font-bold text-slate-400 uppercase tracking-widest ml-1">Date</label>
+                  <input
+                    id="compliance-date"
+                    className="!w-full !block h-10 rounded-lg border-primary/10 bg-primary/[0.03] text-xs font-semibold focus:border-primary focus:ring-primary dark:text-white px-3"
+                    type="date"
+                    value={form.log_date}
+                    onChange={(e) => setForm((f) => ({ ...f, log_date: e.target.value || todayStr() }))}
+                    max={todayStr()}
+                  />
+                </div>
+                <div className="space-y-3 pt-1">
+                  <label className="text-[9px] font-bold text-slate-400 uppercase tracking-widest ml-1">Meals Followed</label>
+                  <div className="space-y-2 !flex !flex-col">
+                    {MEAL_LABELS.map(({ key, label }) => (
+                      <label key={key} className="!w-full !flex !items-center !justify-between p-3 rounded-lg border border-primary/10 bg-white dark:bg-transparent cursor-pointer hover:bg-primary/5 transition-all !m-0 !gap-0">
+                        <span className="text-xs font-bold text-slate-700 dark:text-slate-200">{label}</span>
+                        <input
+                          checked={form.meals[key] ?? false}
+                          onChange={() => handleMealChange(key)}
+                          className="rounded text-primary focus:ring-primary h-5 w-5 border-primary/20 flex-shrink-0"
+                          type="checkbox"
+                        />
+                      </label>
+                    ))}
+                  </div>
+                </div>
+
+                {error && <div className="!text-[rgb(244,37,89)] text-[10px] font-bold bg-[rgb(244,37,89)]/5 p-3 rounded-lg border border-[rgb(244,37,89)]/10">{error}</div>}
+                {success && <div className="text-emerald-600 text-[10px] font-bold bg-emerald-50 dark:bg-emerald-900/20 p-3 rounded-lg border border-emerald-100 dark:border-emerald-900/20">{success}</div>}
+
+                <button
+                  className="w-full !bg-[rgb(244,37,89)] text-white py-3 rounded-lg font-bold text-xs hover:scale-[1.01] transition-all shadow-lg shadow-primary/20 mt-1 disabled:opacity-50"
+                  type="submit"
+                  disabled={submitLoading}
+                >
+                  {submitLoading ? 'Saving...' : 'Save Compliance'}
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-8 bg-white dark:bg-background-dark/30 rounded-2xl border border-primary/5 shadow-sm overflow-hidden text-xs">
+          <div className="p-6 border-b border-primary/5 flex items-center justify-between">
+            <h3 className="font-bold text-lg text-slate-900 dark:text-white">Recent Logs</h3>
             {logs.length > 0 && (
-              <button type="button" className="btn btn-sm btn-outline-theme" onClick={handleExportCsv}>
-                Export CSV
+              <button
+                type="button"
+                onClick={handleExportCsv}
+                className="!text-[rgb(244,37,89)] text-[9px] font-bold hover:underline uppercase tracking-widest"
+              >
+                Export History (CSV)
               </button>
             )}
           </div>
-          {logs.length === 0 ? (
-            <div className="text-center py-4">
-              <div className="text-muted mb-2" style={{ fontSize: '2rem' }} role="img" aria-hidden>📋</div>
-              <p className="text-muted small mb-0">No compliance logs yet.</p>
-              <p className="text-muted small mb-0">Use the form above to log which meals you followed.</p>
-            </div>
-          ) : (
-            <ul className="list-unstyled mb-0">
-              {logs.map((log, i) => (
-                <li
-                  key={log.id ?? log.log_date}
-                  className="d-flex justify-content-between align-items-center py-3 px-3 rounded mb-2 theme-bg-secondary"
-                  style={i < logs.length - 1 ? { marginBottom: '0.5rem' } : undefined}
-                >
-                  <span className="theme-text fw-medium">{formatDate(log.log_date)}</span>
-                  <span className="badge bg-primary rounded-pill px-3 py-2">
-                    {log.summary?.followed ?? 0}/5 · {log.summary?.percent ?? 0}%
-                  </span>
-                </li>
-              ))}
-            </ul>
-          )}
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse">
+              <thead>
+                <tr className="bg-primary/[0.03] text-slate-400 text-[9px] font-bold uppercase tracking-widest">
+                  <th className="px-6 py-4">Date</th>
+                  <th className="px-6 py-4">Meals Followed</th>
+                  <th className="px-6 py-4">Adherence Score</th>
+                  <th className="px-6 py-4">Status</th>
+                  <th className="px-6 py-4 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-primary/5">
+                {logs.length === 0 ? (
+                  <tr>
+                    <td colSpan="5" className="px-6 py-12 text-center text-slate-400 italic text-xs font-medium">
+                      No compliance logs yet. Use the "Log Today" form above to start tracking.
+                    </td>
+                  </tr>
+                ) : (
+                  logs.map((log) => {
+                    const percent = log.summary?.percent ?? 0;
+                    const followed = log.summary?.followed ?? 0;
+                    const total = log.summary?.total ?? 5;
+                    return (
+                      <tr key={log.id ?? log.log_date} className="hover:bg-primary/[0.02] transition-colors group">
+                        <td className="px-6 py-4 text-xs font-bold text-slate-900 dark:text-white">{formatDate(log.log_date)}</td>
+                        <td className="px-6 py-4 text-xs text-slate-500 dark:text-slate-400 font-bold tracking-tight">{followed} / {total}</td>
+                        <td className="px-6 py-4">
+                          <div className="flex items-center gap-2">
+                            <div className="w-20 h-1.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden shadow-inner">
+                              <div
+                                className={`h-full rounded-full transition-all duration-1000 ${percent >= 80 ? 'bg-emerald-500' : percent >= 50 ? 'bg-[rgb(244,37,89)]' : 'bg-red-400'}`}
+                                style={{ width: `${percent}%` }}
+                              ></div>
+                            </div>
+                            <span className={`text-[9px] font-bold ${percent >= 80 ? 'text-emerald-500' : '!text-[rgb(244,37,89)]'}`}>{percent}%</span>
+                          </div>
+                        </td>
+                        <td className="px-6 py-4">
+                          <span className={`text-[8px] font-bold px-2 py-0.5 rounded-full uppercase tracking-widest shadow-sm ${percent >= 100 ? 'bg-emerald-100 text-emerald-700' : percent >= 70 ? 'bg-[rgb(244,37,89)]/10 !text-[rgb(244,37,89)]' : 'bg-slate-100 text-slate-600'}`}>
+                            {percent >= 100 ? 'Perfect' : percent >= 70 ? 'Good' : 'In Progress'}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4 text-right">
+                          <button className="text-slate-300 hover:!text-[rgb(244,37,89)] transition-all hover:scale-110 active:scale-95">
+                            <span className="material-symbols-outlined text-lg">edit</span>
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  })
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
-      </div>
+      </main>
     </div>
   );
 }

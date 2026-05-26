@@ -5,9 +5,9 @@
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
 
 const DEFAULT_COLORS = {
-  protein: '#be185d',
-  carbs: '#db2777',
-  fat: '#f472b6',
+  protein: 'rgb(244, 37, 89)',
+  carbs: 'rgba(244, 37, 89, 0.7)',
+  fat: 'rgba(244, 37, 89, 0.4)',
 };
 
 const LABELS = {

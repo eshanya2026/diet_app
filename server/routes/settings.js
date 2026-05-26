@@ -41,6 +41,9 @@ settingsRouter.put('/', requireUserAuth, async (req, res) => {
     const waterIntervalHours = Math.max(1, Math.min(6, parseInt(body.water_reminder_interval_hours, 10) || 2));
     const waterStartTime = String(body.water_reminder_start_time ?? '').trim();
     const waterStart = TIME_REGEX.test(waterStartTime) ? waterStartTime : '08:00';
+    const waterEndTime = String(body.water_reminder_end_time ?? '').trim();
+    const waterEnd = TIME_REGEX.test(waterEndTime) ? waterEndTime : '22:00';
+    const weeklyReportEnabled = Boolean(body.weekly_report_enabled);
     const updated = await upsertUserSettings(userId, {
       breakfast_time: breakfast,
       lunch_time: lunch,
@@ -49,6 +52,8 @@ settingsRouter.put('/', requireUserAuth, async (req, res) => {
       water_reminders_enabled: waterRemindersEnabled,
       water_reminder_interval_hours: waterIntervalHours,
       water_reminder_start_time: waterStart,
+      water_reminder_end_time: waterEnd,
+      weekly_report_enabled: weeklyReportEnabled,
     });
     return res.status(200).json({ success: true, data: updated });
   } catch (err) {

@@ -7,6 +7,7 @@ import { Link } from 'react-router-dom';
 import PageHeader from '../components/PageHeader';
 import { IconScale, IconDocumentText } from '../components/Icons';
 import { getCompliance, getUserSettings } from '../api/dietApi';
+import { useAuth } from '../context/AuthContext';
 
 const WEEKDAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 const WEEKDAY_ORDER = [1, 2, 3, 4, 5, 6, 0]; // Monday first
@@ -68,6 +69,7 @@ function buildWeeklyBars(logs) {
 }
 
 export default function Dashboard() {
+  const { user } = useAuth();
   const lastResult = getLatestResult();
   const [weeklyBars, setWeeklyBars] = useState(() => WEEKDAYS.map((d) => ({ label: d, used: 0 })));
   const [overallCompliance, setOverallCompliance] = useState(0);
@@ -269,172 +271,183 @@ export default function Dashboard() {
   })();
 
   return (
-    <div className="theme-bg">
-      <PageHeader title="Dashboard" description="Overview and quick actions">
-        <div className="btn-group" role="group" aria-label="Quick actions">
-          <Link to="/generate" className="btn btn-theme-primary btn-sm">
-            Generate plan
+    <div className="max-w-full mx-auto space-y-8">
+      {/* Welcome & Quick Actions */}
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+        <div>
+          <h2 className="text-3xl font-bold text-slate-900 dark:text-white">
+            Welcome back, {user?.name ? user.name.split(' ')[0] : 'User'}! 👋
+          </h2>
+          <p className="text-slate-500 dark:text-slate-400 mt-1">
+            {bmiAdvice.split('.')[0]}.
+          </p>
+        </div>
+        <div className="flex items-center gap-3">
+          <Link to="/compliance" className="flex items-center gap-2 px-5 py-2.5 !bg-[rgb(244,37,89)] text-white rounded-xl font-bold text-sm shadow-lg shadow-primary/20 hover:scale-[1.02] transition-transform !no-underline">
+            <span className="material-symbols-outlined text-xl">add_circle</span>
+            Log Meal
           </Link>
-          <Link to="/compliance" className="btn btn-outline-theme btn-sm ms-2">
-            Log compliance
-          </Link>
-          <Link to="/history" className="btn btn-outline-theme btn-sm ms-2">
-            View history
+          <Link to="/water" className="flex items-center gap-2 px-5 py-2.5 bg-[rgb(244,37,89)]/10 !text-[rgb(244,37,89)] rounded-xl font-bold text-sm hover:brightness-95 transition-all !no-underline">
+            <span className="material-symbols-outlined text-xl">water_drop</span>
+            Add Water
           </Link>
         </div>
-      </PageHeader>
+      </div>
 
-      <div className="row g-4 mb-4">
-        <div className="col-lg-5">
-          <div className="card theme-card shadow-theme h-100">
-            <div className="card-body">
-              <h2 className="h6 fw-semibold theme-text mb-3">Daily calorie goal</h2>
-              <div className="d-flex align-items-center gap-3">
-                <div className="dashboard-circle-wrap">
-                  <svg className="dashboard-circle-svg" width={140} height={140} viewBox="0 0 100 100">
-                    <circle
-                      className="dashboard-circle-bg"
-                      cx="50"
-                      cy="50"
-                      r={RING_RADIUS}
-                      fill="none"
-                      strokeWidth={RING_STROKE}
-                    />
-                    <circle
-                      className="dashboard-circle-fill"
-                      cx="50"
-                      cy="50"
-                      r={RING_RADIUS}
-                      fill="none"
-                      strokeWidth={RING_STROKE}
-                      strokeDasharray={circumference}
-                      strokeDashoffset={offset}
-                      strokeLinecap="round"
-                    />
-                  </svg>
-                  <div className="dashboard-circle-center">
-                    <div className="fw-bold theme-text" style={{ fontSize: '1.1rem' }}>
-                      {used.toLocaleString()} kcal
-                    </div>
-                    <div className="small text-muted">of {dailyTarget} kcal</div>
+      {/* Main Stats Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Calorie Circular Progress & Macros*/}
+        <div className="lg:col-span-2 bg-white dark:bg-background-dark/30 rounded-3xl p-8 border border-primary/5 shadow-sm flex flex-col md:flex-row items-center gap-12">
+          {/* Circular Progress */}
+          <div className="relative size-56 flex-shrink-0">
+            <svg className="size-full" viewBox="0 0 100 100">
+              <circle className="!text-[rgb(244,37,89)]/10" cx="50" cy="50" fill="none" r="45" stroke="currentColor" strokeWidth="8"></circle>
+              <circle
+                className="!text-[rgb(244,37,89)] -rotate-90 origin-center transition-all duration-1000"
+                cx="50"
+                cy="50"
+                fill="none"
+                r="45"
+                stroke="currentColor"
+                strokeDasharray="282.7"
+                strokeDashoffset={282.7 - (percent / 100) * 282.7}
+                strokeLinecap="round"
+                strokeWidth="8"
+              ></circle>
+            </svg>
+            <div className="absolute inset-0 flex flex-col items-center justify-center -mb-2">
+              <span className="text-4xl font-bold text-slate-900 dark:text-white leading-none">{used.toLocaleString()}</span>
+              <span className="text-xs font-bold text-slate-400 uppercase tracking-widest mt-1">Kcal used</span>
+            </div>
+          </div>
+
+          <div className="flex-1 space-y-6 w-full">
+            <div className="flex justify-between items-center">
+              <h3 className="text-xl font-bold m-0 p-0 text-slate-900 dark:text-slate-100">Daily Calorie Goal</h3>
+              <span className="!text-[rgb(244,37,89)] font-bold bg-[rgb(244,37,89)]/10 px-3 py-1 rounded-full text-xs">{percent}% Reached</span>
+            </div>
+            
+            <div className="space-y-5">
+              {/* Proteins Array */}
+              <div className="flex items-center gap-4">
+                <div className="size-10 rounded-xl bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center text-orange-600 flex-shrink-0">
+                  <span className="material-symbols-outlined">egg</span>
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex justify-between items-center mb-1 text-sm font-semibold text-slate-700 dark:text-slate-300">
+                    <span className="truncate pr-2">Proteins</span>
+                    <span className="flex-shrink-0">{Math.round((lastResult?.diet_plan?.protein_g || 120) * (percent/100))}g / {lastResult?.diet_plan?.protein_g || 120}g</span>
+                  </div>
+                  <div className="h-2 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                    <div className="h-full bg-orange-500 rounded-full" style={{ width: `${percent}%` }}></div>
                   </div>
                 </div>
-                <div className="small text-muted">
-                  <p className="mb-1">
-                    This is an estimate based on your current weekly compliance. Aim for steady progress
-                    rather than perfection.
-                  </p>
-                  <p className="mb-0">
-                    Weekly adherence: <span className="theme-text fw-semibold">{percent}%</span>
-                  </p>
-                </div>
               </div>
-            </div>
-          </div>
-        </div>
 
-        <div className="col-lg-7">
-          <div className="card theme-card shadow-theme h-100">
-            <div className="card-body">
-              <div className="d-flex justify-content-between align-items-center mb-2">
-                <div>
-                  <h2 className="h6 fw-semibold theme-text mb-0">Weekly compliance</h2>
-                  <p className="small text-muted mb-0">How closely you followed the plan over the last days</p>
+              {/* Carbs Array */}
+              <div className="flex items-center gap-4">
+                <div className="size-10 rounded-xl bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 flex-shrink-0">
+                  <span className="material-symbols-outlined">bakery_dining</span>
                 </div>
-                <span className="badge bg-primary rounded-pill">{percent}%</span>
-              </div>
-              <div className="d-flex align-items-end justify-content-between gap-2" style={{ minHeight: 120 }}>
-                {weeklyBars.map(({ label, used: u }) => (
-                  <div key={label} className="d-flex flex-column align-items-center flex-grow-1">
-                    <div className="dashboard-compliance-bar w-100 mb-1" style={{ maxWidth: 38 }}>
-                      <div className="dashboard-compliance-remaining" style={{ height: `${100 - u}%` }} />
-                      <div className="dashboard-compliance-used" style={{ height: `${u}%` }} />
-                    </div>
-                    <span className="small text-muted">{label}</span>
+                <div className="flex-1 min-w-0">
+                  <div className="flex justify-between items-center mb-1 text-sm font-semibold text-slate-700 dark:text-slate-300">
+                    <span className="truncate pr-2">Carbs</span>
+                    <span className="flex-shrink-0">{Math.round((lastResult?.diet_plan?.carbs_g || 200) * (percent/100))}g / {lastResult?.diet_plan?.carbs_g || 200}g</span>
                   </div>
-                ))}
-              </div>
-              {complianceError && (
-                <p className="small text-muted mb-0 mt-2">Compliance data could not be loaded. Check your connection or try again later.</p>
-              )}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div className="card theme-card shadow-theme mb-4">
-        <div className="card-body d-flex flex-column flex-md-row align-items-start align-items-md-center gap-3">
-          <div className="flex-grow-1">
-            <div className="small text-uppercase text-muted mb-1">Next meal reminder</div>
-            <h2 className="h6 fw-semibold theme-text mb-1">
-              {nextMeal.label}
-            </h2>
-            <p className="small mb-1">
-              Time:{' '}
-              <span className="theme-text fw-semibold">
-                {nextMeal.timeDisplay}
-              </span>
-            </p>
-            <p className="small mb-0">
-              Food:{' '}
-              <span className="theme-text fw-semibold">
-                {nextMeal.food}
-              </span>
-            </p>
-          </div>
-        </div>
-        <p className="small text-muted mb-0 mt-2">
-          Seeing your upcoming meal helps you stay consistent and improves diet compliance.
-        </p>
-      </div>
-
-      <div className="card theme-card shadow-theme mb-4">
-        <div className="card-body">
-          <div className="small text-uppercase text-muted mb-1">Motivation / Health tip</div>
-          <h2 className="h6 fw-semibold theme-text mb-1">{motivation.title}</h2>
-          <p className="small text-muted mb-0">{motivation.text}</p>
-        </div>
-      </div>
-
-      {lastResult && (
-        <div className="row g-3 mb-4">
-          <div className="col-md-6">
-            <div className="card theme-card shadow-theme h-100">
-              <div className="card-body">
-                <div className="d-flex align-items-center gap-2 mb-2">
-                  <IconScale className="theme-text opacity-85" width={20} height={20} aria-hidden />
-                  <h2 className="h6 fw-semibold theme-text mb-0">BMI status</h2>
+                  <div className="h-2 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                    <div className="h-full bg-blue-500 rounded-full" style={{ width: `${Math.min(percent + 5, 100)}%` }}></div>
+                  </div>
                 </div>
-                <p className="mb-1 theme-text">
-                  <span className="fw-semibold">{bmiValue ?? '—'}</span>{' '}
-                  <span className="small text-muted">kg/m²</span>
-                </p>
-                <p className="small mb-2">
-                  Category:{' '}
-                  <span className="fw-semibold text-primary">
-                    {bmiCategory ?? 'Not available'}
-                  </span>
-                </p>
-                <p className="small text-muted mb-0">{bmiAdvice}</p>
               </div>
-            </div>
-          </div>
-          <div className="col-md-6">
-            <div className="card theme-card shadow-theme h-100">
-              <div className="card-body">
-                <div className="d-flex align-items-center gap-2 mb-2">
-                  <IconDocumentText className="theme-text opacity-85" width={20} height={20} aria-hidden />
-                  <h2 className="h6 fw-semibold theme-text mb-0">Latest plan</h2>
+
+              {/* Fats Array */}
+              <div className="flex items-center gap-4">
+                <div className="size-10 rounded-xl bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center text-purple-600 flex-shrink-0">
+                  <span className="material-symbols-outlined">opacity</span>
                 </div>
-                <p className="text-muted small mb-2">
-                  {lastResult.user?.name ?? 'Your'} · BMI {lastResult.diet_plan?.bmi ?? '—'} ({lastResult.diet_plan?.bmi_category ?? '—'})
-                </p>
-                <Link to="/result" className="btn btn-theme-primary btn-sm cursor-pointer">View plan</Link>
+                <div className="flex-1 min-w-0">
+                  <div className="flex justify-between items-center mb-1 text-sm font-semibold text-slate-700 dark:text-slate-300">
+                    <span className="truncate pr-2">Fats</span>
+                    <span className="flex-shrink-0">{Math.round((lastResult?.diet_plan?.fat_g || 65) * (percent/100))}g / {lastResult?.diet_plan?.fat_g || 65}g</span>
+                  </div>
+                  <div className="h-2 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                    <div className="h-full bg-purple-500 rounded-full" style={{ width: `${Math.max(percent - 5, 0)}%` }}></div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      )}
+
+        {/* Meal Suggestion Card (Next Meal) */}
+        <div className="bg-white dark:bg-background-dark/30 rounded-3xl overflow-hidden border border-primary/5 shadow-sm flex flex-col">
+          <div className="relative h-48">
+            <img alt="Meal Suggestion" className="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCASe-A6YaFquqdXIisd7N2v-_wID4mgTTmUq39vxEiVbWFev7cLQz1V5yMHmXj8RyID1sQebUhdkcIpXtwo2hcMuayDnVjFn6nLkC6utbzG0ShmtXGt3bwc1ljLt3SBvsTYqheVZSN0tzlkQz4PuFcfd8kRnXt1zsa1SpU79hc4OQuzw5ObZ_AxpP3EEryHSQgNlkwUwpeym58qljGA3oU8tKttgQ-ngXps7qitb7vKM3V5nGPvZKU1Us98NtGMEwOug9Cuy5MgnY"/>
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+            <div className="absolute bottom-4 left-4 right-4">
+              <span className="!bg-[rgb(244,37,89)] text-white text-[10px] font-bold uppercase px-2 py-1 rounded-md">Upcoming: {nextMeal.label}</span>
+              <h4 className="text-white font-bold text-lg mt-1 mb-0 leading-tight">{nextMeal.food}</h4>
+            </div>
+          </div>
+          <div className="p-6 flex-1 flex flex-col">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-1 text-slate-500 text-sm">
+                <span className="material-symbols-outlined text-lg">schedule</span>
+                <span>{nextMeal.timeDisplay}</span>
+              </div>
+              <div className="flex items-center gap-1 !text-[rgb(244,37,89)] text-sm font-bold">
+                <span className="material-symbols-outlined text-lg">local_fire_department</span>
+                <span>Est. {Math.round(dailyTarget * 0.35)} Kcal</span>
+              </div>
+            </div>
+            <p className="text-sm text-slate-600 dark:text-slate-400 mb-6 flex-1">
+               {motivation.text}
+            </p>
+            <Link to="/result" className="block text-center w-full border-2 border-[rgb(244,37,89)]/20 !text-[rgb(244,37,89)] py-2 rounded-xl font-bold hover:!bg-[rgb(244,37,89)] hover:text-white transition-all !no-underline">
+              View Full Plan
+            </Link>
+          </div>
+        </div>
+      </div>
+
+      {/* Weekly Compliance Chart Section */}
+      <div className="bg-white dark:bg-background-dark/30 rounded-3xl p-8 border border-primary/5 shadow-sm">
+        <div className="flex items-center justify-between mb-8">
+          <div>
+            <h3 className="text-xl font-bold m-0 p-0 text-slate-900 dark:text-slate-100">Weekly Compliance</h3>
+            <p className="text-sm text-slate-500 m-0">Your average calorie intake vs target last 7 days</p>
+          </div>
+          <select className="bg-[rgb(244,37,89)]/5 border-none rounded-lg text-sm font-bold py-2 pl-3 pr-8 focus:ring-1 focus:ring-[rgb(244,37,89)]/30 text-slate-700 dark:text-slate-300">
+            <option>This Week</option>
+            <option>Last Week</option>
+          </select>
+        </div>
+        
+        <div className="h-64 flex items-end justify-between gap-2">
+          {weeklyBars.map(({ label, used: u }, index) => {
+             // Assuming dailyTarget is 100% height, u is percentage of dailyTarget
+             const isToday = index === new Date().getDay() - 1 || (new Date().getDay() === 0 && index === 6);
+             const heightPct = u > 0 ? Math.min(u, 100) : 0;
+             const mappedKcal = Math.round(dailyTarget * (u / 100));
+
+             return (
+              <div key={label} className="flex-1 flex flex-col items-center gap-3">
+                <div className="w-full max-w-[40px] bg-[rgb(244,37,89)]/20 rounded-t-lg relative group h-48">
+                  <div 
+                    className={`absolute bottom-0 w-full ${u === 0 ? 'bg-[rgb(244,37,89)]/40' : 'bg-[rgb(244,37,89)]'} rounded-t-lg transition-all`} 
+                    style={{ height: `${u === 0 ? 0 : heightPct}%` }}
+                  ></div>
+                  <div className="opacity-0 group-hover:opacity-100 absolute -top-8 left-1/2 -translate-x-1/2 bg-slate-900 text-white text-[10px] py-1 px-2 rounded whitespace-nowrap z-10">
+                    {u === 0 ? 'Pending' : `${mappedKcal} kcal`}
+                  </div>
+                </div>
+                <span className={`text-xs font-bold ${isToday ? '!text-[rgb(244,37,89)]' : 'text-slate-400'}`}>{label}</span>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
     </div>
   );
 }

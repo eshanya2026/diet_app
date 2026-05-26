@@ -1,3 +1,12 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: rgb(244, 37, 89);
+  --color-background-light: #f8f5f6;
+  --color-background-dark: #221014;
+  --font-display: "Inter", "sans-serif";
+}
+
 /* Diet AI – pinkish elegant theme. Variables set by ThemeContext. */
 :root {
   --theme-bg: #ffffff;
@@ -5,19 +14,18 @@
   --theme-text: #111827;
   --theme-text-muted: #6b7280;
   --theme-border: #f9a8d4;
-  --theme-primary: #ec4899;
-  --theme-accent: #f472b6;
+  --theme-primary: rgb(244, 37, 89);
+  --theme-accent: rgb(244, 37, 89);
   --theme-card-bg: #ffffff;
   --theme-input-bg: #ffffff;
-  --shadow-sm: 0 1px 3px rgba(190, 24, 93, 0.06);
-  --shadow-md: 0 4px 14px rgba(190, 24, 93, 0.08), 0 2px 6px rgba(0, 0, 0, 0.04);
-  --shadow-lg: 0 12px 28px rgba(190, 24, 93, 0.1), 0 4px 10px rgba(0, 0, 0, 0.06);
-  --shadow-glow: 0 0 20px rgba(219, 39, 119, 0.15);
+  --shadow-sm: 0 1px 3px rgba(244, 37, 89, 0.06);
+  --shadow-md: 0 4px 14px rgba(244, 37, 89, 0.08), 0 2px 6px rgba(0, 0, 0, 0.04);
+  --shadow-lg: 0 12px 28px rgba(244, 37, 89, 0.1), 0 4px 10px rgba(0, 0, 0, 0.06);
+  --shadow-glow: 0 0 20px rgba(244, 37, 89, 0.15);
   --radius-card: 0.75rem;
   --radius-btn: 0.5rem;
   --transition: 0.2s ease;
   --font-sans: 'DM Sans', system-ui, -apple-system, sans-serif;
-  --font-display: 'Fraunces', Georgia, serif;
   --layout-nav-height: 3.5rem;
   --layout-content-max: 1200px;
   --layout-section-gap: 1.5rem;
@@ -29,30 +37,30 @@
   --theme-text: #fce7f3;
   --theme-text-muted: #f9a8d4;
   --theme-border: #4c0519;
-  --theme-primary: #ec4899;
-  --theme-accent: #f472b6;
+  --theme-primary: rgb(244, 37, 89);
+  --theme-accent: rgb(244, 37, 89);
   --theme-card-bg: #251118;
   --theme-input-bg: #2d0f1a;
   --shadow-sm: 0 1px 4px rgba(0, 0, 0, 0.3);
-  --shadow-md: 0 4px 16px rgba(236, 72, 153, 0.12), 0 2px 8px rgba(0, 0, 0, 0.2);
-  --shadow-lg: 0 12px 32px rgba(236, 72, 153, 0.15), 0 4px 12px rgba(0, 0, 0, 0.25);
-  --shadow-glow: 0 0 24px rgba(236, 72, 153, 0.2);
+  --shadow-md: 0 4px 16px rgba(244, 37, 89, 0.12), 0 2px 8px rgba(0, 0, 0, 0.2);
+  --shadow-lg: 0 12px 32px rgba(244, 37, 89, 0.15), 0 4px 12px rgba(0, 0, 0, 0.25);
+  --shadow-glow: 0 0 24px rgba(244, 37, 89, 0.2);
 }
 
 [data-theme='dark'] .weight-trend-card {
-  border-color: rgba(236, 72, 153, 0.2);
+  border-color: rgba(244, 37, 89, 0.2);
   box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
   background: linear-gradient(180deg, var(--theme-card-bg) 0%, #1f0d14 100%);
 }
 
 [data-theme='dark'] .weight-summary-pill {
-  background: rgba(236, 72, 153, 0.12);
-  border-color: rgba(236, 72, 153, 0.25);
+  background: rgba(244, 37, 89, 0.12);
+  border-color: rgba(244, 37, 89, 0.25);
 }
 
 [data-theme='dark'] .weight-trend-chart--empty {
-  background: linear-gradient(135deg, var(--theme-bg-secondary) 0%, rgba(236, 72, 153, 0.08) 100%);
-  border-color: rgba(236, 72, 153, 0.3);
+  background: linear-gradient(135deg, var(--theme-bg-secondary) 0%, rgba(244, 37, 89, 0.08) 100%);
+  border-color: rgba(244, 37, 89, 0.3);
 }
 
 *,
@@ -67,9 +75,6 @@ html {
 
 body {
   font-family: var(--font-sans);
-  font-size: 1rem;
-  line-height: 1.65;
-  letter-spacing: 0.01em;
   background: var(--theme-bg) !important;
   color: var(--theme-text) !important;
   transition: background-color 0.25s ease, color 0.25s ease;
@@ -150,6 +155,23 @@ body {
 .stagger-children > *:nth-child(6) { animation-delay: 0.17s; }
 @media (prefers-reduced-motion: reduce) {
   .stagger-children > * { animation: none; opacity: 1; }
+}
+
+/* Material Symbols Rendering Fix */
+.material-symbols-outlined {
+  font-family: 'Material Symbols Outlined' !important;
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px;  /* Preferred icon size */
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  -webkit-font-feature-settings: 'liga';
+  -webkit-font-smoothing: antialiased;
 }
 
 /* ========== Sidebar layout (app shell) ========== */
@@ -557,13 +579,6 @@ a.text-primary:hover { color: var(--theme-accent) !important; }
 .btn-primary { background: linear-gradient(135deg, var(--theme-primary), var(--theme-accent)) !important; border-color: var(--theme-primary) !important; }
 .btn-primary:hover { filter: brightness(1.08); box-shadow: var(--shadow-md); }
 
-/* Headings – display font */
-h1, .h1, h2, .h2, h3, .h3, h4, .h4, h5, .h5, h6, .h6 {
-  font-family: var(--font-display);
-  font-weight: 600;
-  letter-spacing: 0.02em;
-  line-height: 1.3;
-}
 .page-header__title,
 .navbar-theme .navbar-brand {
   font-family: var(--font-display);
@@ -572,8 +587,8 @@ h1, .h1, h2, .h2, h3, .h3, h4, .h4, h5, .h5, h6, .h6 {
 /* Weight page – modern card and trend section */
 .weight-trend-card {
   border-radius: 1rem;
-  border: 1px solid rgba(236, 72, 153, 0.12);
-  box-shadow: 0 4px 20px rgba(236, 72, 153, 0.06), 0 1px 3px rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(244, 37, 89, 0.12);
+  box-shadow: 0 4px 20px rgba(244, 37, 89, 0.06), 0 1px 3px rgba(0, 0, 0, 0.04);
   background: linear-gradient(180deg, var(--theme-card-bg) 0%, var(--theme-bg-secondary) 100%);
   overflow: hidden;
 }
@@ -608,13 +623,13 @@ h1, .h1, h2, .h2, h3, .h3, h4, .h4, h5, .h5, h6, .h6 {
   align-items: flex-start;
   padding: 0.4rem 0.75rem;
   border-radius: 0.5rem;
-  background: rgba(236, 72, 153, 0.06);
-  border: 1px solid rgba(236, 72, 153, 0.15);
+  background: rgba(244, 37, 89, 0.06);
+  border: 1px solid rgba(244, 37, 89, 0.15);
   min-width: 4.5rem;
 }
 
 .weight-summary-pill--change {
-  background: rgba(236, 72, 153, 0.04);
+  background: rgba(244, 37, 89, 0.04);
 }
 
 .weight-summary-pill-label {
@@ -708,9 +723,9 @@ h1, .h1, h2, .h2, h3, .h3, h4, .h4, h5, .h5, h6, .h6 {
   align-items: center;
   justify-content: center;
   padding: 1.25rem;
-  background: linear-gradient(135deg, var(--theme-bg-secondary) 0%, rgba(236, 72, 153, 0.04) 100%);
+  background: linear-gradient(135deg, var(--theme-bg-secondary) 0%, rgba(244, 37, 89, 0.04) 100%);
   border-radius: 0.75rem;
-  border: 1px dashed rgba(236, 72, 153, 0.2);
+  border: 1px dashed rgba(244, 37, 89, 0.2);
 }
 
 .weight-trend-chart--empty p {
@@ -771,8 +786,203 @@ h1, .h1, h2, .h2, h3, .h3, h4, .h4, h5, .h5, h6, .h6 {
   position: relative;
   height: 100px;
   border-radius: 999px;
-  background: linear-gradient(to top, rgba(236, 72, 153, 0.06), rgba(236, 72, 153, 0.02));
+  background: linear-gradient(to top, rgba(244, 37, 89, 0.06), rgba(244, 37, 89, 0.02));
   overflow: hidden;
+}
+
+.dashboard-compliance-remaining {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: transparent;
+}
+
+.dashboard-compliance-used {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(180deg, var(--theme-primary), var(--theme-accent));
+  border-radius: 999px 999px 0 0;
+  transition: height 0.4s ease;
+}
+
+/* Water tracker – app-style layout */
+.water-hero {
+  background: linear-gradient(165deg, var(--theme-card-bg) 0%, rgba(14, 165, 233, 0.06) 50%, rgba(6, 182, 212, 0.04) 100%);
+  border: 1px solid rgba(14, 165, 233, 0.15);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-sm);
+  margin-bottom: 1.5rem;
+  padding: 2rem 1.25rem;
+}
+
+.water-hero-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  max-width: 360px;
+  margin: 0 auto;
+}
+
+.water-circle-wrap {
+  position: relative;
+  width: 180px;
+  height: 180px;
+  flex-shrink: 0;
+  margin-bottom: 1rem;
+}
+
+.water-circle-svg {
+  display: block;
+}
+
+.water-circle-bg {
+  stroke: rgba(14, 165, 233, 0.14);
+  transition: stroke 0.2s ease;
+}
+
+.water-circle-fill {
+  transition: stroke-dashoffset 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.water-circle-center {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  pointer-events: none;
+}
+
+.water-droplet-icon {
+  font-size: 1.5rem;
+  line-height: 1;
+  margin-bottom: 0.25rem;
+  opacity: 0.9;
+}
+
+.water-circle-percent {
+  font-size: 1rem;
+}
+
+.water-circle-percent-hero {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--theme-primary);
+  line-height: 1.2;
+}
+
+.water-circle-value {
+  font-size: 1.25rem;
+  line-height: 1.2;
+}
+
+.water-circle-goal {
+  font-size: 0.85rem;
+}
+
+.water-hero-message {
+  font-size: 0.95rem;
+  margin-bottom: 1.5rem;
+  color: var(--theme-text-muted);
+  font-weight: 500;
+}
+
+.water-quick-add {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.75rem;
+}
+
+.water-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.65rem 1.1rem;
+  border-radius: 999px;
+  border: 1px solid rgba(14, 165, 233, 0.35);
+  background: rgba(255, 255, 255, 0.7);
+  color: #0c7bab;
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: background 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
+}
+
+.water-chip:hover {
+  background: rgba(14, 165, 233, 0.12);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(14, 165, 233, 0.2);
+}
+
+.water-chip:active {
+  transform: translateY(0);
+}
+
+.water-chip-icon {
+  font-size: 1.1rem;
+  line-height: 1;
+  opacity: 0.9;
+}
+
+.water-chip-label {
+  letter-spacing: 0.02em;
+}
+
+.water-undo {
+  margin-top: 1rem;
+  padding: 0.35rem 0.5rem;
+  background: none;
+  border: none;
+  font-size: 0.8rem;
+  color: var(--theme-text-muted);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  transition: color 0.2s ease;
+}
+
+.water-undo:hover {
+  color: var(--theme-primary);
+}
+
+.water-settings-card .card-body {
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem;
+}
+
+.water-settings-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem 1.5rem;
+}
+
+.water-setting-block {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.water-setting-block label {
+  white-space: nowrap;
+}
+
+.water-goal-ml-input {
+  width: 5.5rem;
+  max-width: 5.5rem;
+  display: inline-block;
+}
+
+.water-settings-link {
+  margin-left: auto;
+  color: var(--theme-primary);
+  text-decoration: none;
+  font-weight: 500;
 }
 
 .dashboard-compliance-remaining {
@@ -985,6 +1195,206 @@ h1, .h1, h2, .h2, h3, .h3, h4, .h4, h5, .h5, h6, .h6 {
   background: rgba(14, 165, 233, 0.18);
 }
 
+.dashboard-compliance-remaining {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: transparent;
+}
+
+.dashboard-compliance-used {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(180deg, var(--theme-primary), var(--theme-accent));
+  border-radius: 999px 999px 0 0;
+  transition: height 0.4s ease;
+}
+
+/* Water tracker – app-style layout */
+.water-hero {
+  background: linear-gradient(165deg, var(--theme-card-bg) 0%, rgba(14, 165, 233, 0.06) 50%, rgba(6, 182, 212, 0.04) 100%);
+  border: 1px solid rgba(14, 165, 233, 0.15);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-sm);
+  margin-bottom: 1.5rem;
+  padding: 2rem 1.25rem;
+}
+
+.water-hero-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  max-width: 360px;
+  margin: 0 auto;
+}
+
+.water-circle-wrap {
+  position: relative;
+  width: 180px;
+  height: 180px;
+  flex-shrink: 0;
+  margin-bottom: 1rem;
+}
+
+.water-circle-svg {
+  display: block;
+}
+
+.water-circle-bg {
+  stroke: rgba(14, 165, 233, 0.14);
+  transition: stroke 0.2s ease;
+}
+
+.water-circle-fill {
+  transition: stroke-dashoffset 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.water-circle-center {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  pointer-events: none;
+}
+
+.water-droplet-icon {
+  font-size: 1.5rem;
+  line-height: 1;
+  margin-bottom: 0.25rem;
+  opacity: 0.9;
+}
+
+.water-circle-percent {
+  font-size: 1rem;
+}
+
+.water-circle-percent-hero {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--theme-primary);
+  line-height: 1.2;
+}
+
+.water-circle-value {
+  font-size: 1.25rem;
+  line-height: 1.2;
+}
+
+.water-circle-goal {
+  font-size: 0.85rem;
+}
+
+.water-hero-message {
+  font-size: 0.95rem;
+  margin-bottom: 1.5rem;
+  color: var(--theme-text-muted);
+  font-weight: 500;
+}
+
+.water-quick-add {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.75rem;
+}
+
+.water-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.65rem 1.1rem;
+  border-radius: 999px;
+  border: 1px solid rgba(14, 165, 233, 0.35);
+  background: rgba(255, 255, 255, 0.7);
+  color: #0c7bab;
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: background 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
+}
+
+.water-chip:hover {
+  background: rgba(14, 165, 233, 0.12);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(14, 165, 233, 0.2);
+}
+
+.water-chip:active {
+  transform: translateY(0);
+}
+
+.water-chip-icon {
+  font-size: 1.1rem;
+  line-height: 1;
+  opacity: 0.9;
+}
+
+.water-chip-label {
+  letter-spacing: 0.02em;
+}
+
+.water-undo {
+  margin-top: 1rem;
+  padding: 0.35rem 0.5rem;
+  background: none;
+  border: none;
+  font-size: 0.8rem;
+  color: var(--theme-text-muted);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  transition: color 0.2s ease;
+}
+
+.water-undo:hover {
+  color: var(--theme-primary);
+}
+
+.water-settings-card .card-body {
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem;
+}
+
+.water-settings-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem 1.5rem;
+}
+
+.water-setting-block {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.water-setting-block label {
+  white-space: nowrap;
+}
+
+.water-goal-ml-input {
+  width: 5.5rem;
+  max-width: 5.5rem;
+  display: inline-block;
+}
+
+.water-settings-link {
+  margin-left: auto;
+  color: var(--theme-primary);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.water-settings-link:hover {
+  text-decoration: underline;
+  color: var(--theme-primary);
+}
+
 /* Admin panel */
 .admin-sidebar {
   flex-shrink: 0;
@@ -997,3 +1407,24 @@ h1, .h1, h2, .h2, h3, .h3, h4, .h4, h5, .h5, h6, .h6 {
     flex-direction: column;
   }
 }
+
+/* Water Tracker Liquid Wave Animations */
+
+@keyframes wave-move {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+@keyframes wave-move-slow {
+  0% { transform: translateX(-50%); }
+  100% { transform: translateX(0); }
+}
+
+.animate-wave {
+  animation: wave-move 4s linear infinite;
+}
+
+.animate-wave-slow {
+  animation: wave-move-slow 7s linear infinite;
+}
+
